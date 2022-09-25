@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after{
+    margin: 0;
+    padding: 0;
+    outline: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+    border: none;
+}
+
+:root{
+    --color-white: hsl(252,30%,100%);
+    --color-dark: hsl(252,30%,17%);
+    --color-light: hsl(252,30%,95%);
+    --color-gray: hsl(252,15%,65%);
+    --color-primary:hsl(252,75%,60%);
+    --color-secondary:hsl(252,100%,90%);
+    --color-success:hsl(120,95%,65%);
+    --color-danger:hsl(0,95%,17%);
+    --color-black:hsl(252,30%,10%);
+
+    --border-radius:2rem;
+    --card-border-radius:1rem;
+    --btn-padding:0.6rem 2rem;
+    --search-padding:0.6rem 1rem;
+    --card-padding:1rem;
+
+    --sticky-top-left:5.4rem;
+    --sticky-top-right:-18rem;
+}
+
+body{
+    font-family: 'Dosis', sans-serif;
+    color:var(--color-dark);
+    background:var(--color-light);
+    overflow-x: hidden;
+}
+
+.btn{
+    display: inline-block;
+    padding: var(--btn-padding);
+    font-weight: 500;
+    border-collapse: collapse; 
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 300ms ease;
+    font-size: 0.9rem;
+    position: relative;
+}
+
+.btn:hover{
+    opacity:0.8;
+}
+
+.btn-primary{
+    background: var(--color-primary);
+    color: white;
+}
+
+
+
+.addpost{
+    background: rgba(158, 157, 157, 0.5);
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    z-index: 100;
+    text-align: center;
+    display: grid;
+    place-items: center;
+}
+
+
+
+.addpost .post-create{
+    background: var(--color-white);
+    padding: 3rem;
+    border-radius: var(--card-border-radius);
+    /* border: 3px solid; */
+    border-color: var(--color-dark);
+    width: 50%;
+}
+
+
+.post-create .textarea{
+    display: flex;
+    width: 100%;
+    background: var(--color-light);
+    padding: var(--card-padding);
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-family: 'Dosis', sans-serif;
+    border-radius: var(--card-border-radius);
+    font-size: 0.9rem;
+    position: relative;
+}
+
+@media screen and (max-width:570px){
+    .post-create .fontt{
+        font-size: 0.6rem;
+    }
+
+    .post-create .textarea{
+        font-size: 00.7rem;
+    }
+
+    .post-create::before{
+        display: absolute;
+        top:1.3rem;
+        left:calc(20rem - 0.6rem);
+        display: black;
+    }
+}
