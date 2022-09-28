@@ -4,13 +4,100 @@
 {% block title%}{{userprofile.username}}{% endblock %}
 
 
-
 {% block main %}
 
 
-    {{userprofile.username}}
+    {% comment %} {{userprofile.username}} {% endcomment %}
     
-    
+<div class="middle">
+
+    <div class="wrapper">
+        <a href="profile-bg d-block"></a>
+        <div>
+            <div class="row">
+                <div class="row1">
+                    <a href="#" class="profile-link">
+                        <img src="{% static '/images/profile_photo.png'  %}" class="profile-img" alt="">
+                    </a>
+                    <div class="profile-marg">
+                        <div class="">
+                            <p class="profile-name">arash gholi</p>
+                            <span>
+                                <a href="#">@<span>gholgholi</span></a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" href="#">follow</button>
+            </div>
+            <p>    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <div class="profile-state">
+                <ul class="profile-Arrange">
+                    <li class="profile-details">
+                        <a href="#">
+                            <span class="profile-label d-block">
+                                Followings
+                            </span>
+                            <span class="profile-number">
+                                12
+                            </span>
+                        </a>
+                    </li>
+                    <li class="profile-details">
+                        <a href="#">
+                            <span class="profile-label d-block">
+                                Followers
+                            </span>
+                            <span class="profile-number">
+                                123K
+                            </span>
+                        </a>
+                    </li>
+                    <li class="profile-details">
+                        <a href="#">
+                            <span class="profile-label d-block">
+                                Tweets
+                            </span>
+                            <span class="profile-number">
+                                9.45
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div> 
+
+    <div class="profileposts">
+        <div class="post">
+            <div class="photo">
+                <a href="">
+                <img src="{% static 'images/profile_photo.png' %}" alt="">
+                </a>
+            </div>
+            <div class="photo">
+                <a href="">
+                    <img src="{% static 'images/profile_photo.png' %}" alt="">
+                </a>
+            </div>
+            <div class="photo">
+                <a href="">
+                    <img src="{% static 'images/profile_photo.png' %}" alt="">
+                </a>
+            </div>
+            <div class="photo">
+                <a href="">
+                    <img src="{% static 'images/profile_photo.png' %}" alt="">
+                </a>
+            </div>
+            <div class="photo">
+                <a href="">
+                    <img src="{% static 'images/profile_photo.png' %}" alt="">
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
     
 {% endblock %}
