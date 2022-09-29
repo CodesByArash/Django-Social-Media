@@ -1,6 +1,6 @@
 {% load static %}
-
  
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,7 +22,7 @@
                 <input type="search" placeholder="search for users">
             </div>
             <div class="create">
-                <label class="btn btn-primary bi bi-door-closed" name="logout" for="create-post"></label>
+                <a href="{% url 'logout' %}" class="btn btn-primary bi bi-door-closed" name="logout" for=""></a>
                 <!-- <button type="submit">Create</button> -->
                 <div class="profile-photo">
                     <img src="{{user.profile_img.url}}" alt="profpic">
@@ -49,7 +49,7 @@
                     </div>
                 </a>
                 <div class="sidebar">
-                    <a  class="menu-item active">
+                    <a href="{% url 'home' %}"  class="menu-item active">
                         <span><i class="bi bi-house"></i></span>
                         <h3>Home</h3>
                     </a>
@@ -57,14 +57,10 @@
                         <span><i class="bi bi-person"></i></span>
                         <h3>Profile</h3>
                     </a>
-                    <a  class="menu-item">
+                    <a href="{% url 'settings' %}" class="menu-item">
                         <span><i class="bi bi-gear"></i></i></span>
                         <h3>Settings</h3>
                     </a>
-                    <!-- <a href="" class="menu-item">
-                        <span><i class="bi bi-brush"></i></span>
-                        <h3>Theme</h3>
-                    </a> -->
                 </div>
                 <label class="createe btn btn-primary " id="create" for="create-post">Create Post</label>
                 
@@ -84,15 +80,6 @@
                 <label class="fontt bi bi-x closebtn"></label>
             </div>
             <div>
-                <!-- 
-                <form action="localhost:8080/index.html" method="post">
-                <h2 class="fontt">Add Posts</h2>
-                <input type="file" class="fontt " id="file-upload" hidden/>
-                <label for="file-upload" class="fontt btn btn-primary ">Upload Picture</label>
-                <textarea class="textarea " placeholder="Add Caption ...."></textarea> 
-                <input type="submit" class="btn btn-primary fontt" value="Post" />
-                </form> 
-                -->
                 <h2 class="fontt">Add Posts</h2>
                 <input type="file" class="fontt " id="file-upload" hidden/>
                 <label for="file-upload" class="fontt btn btn-primary ">Upload Picture</label>

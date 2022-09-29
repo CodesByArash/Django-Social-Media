@@ -21,22 +21,22 @@
                     </a>
                     <div class="profile-marg">
                         <div class="">
-                            <p class="profile-name">arash gholi</p>
+                            <p class="profile-name">{{userprofile.first_name}} {{userprofile.last_name}}</p>
                             <span>
-                                <a href="#">@<span>gholgholi</span></a>
+                                <a href="#">@<span>{{userprofile.username}}</span></a>
                             </span>
                         </div>
                     </div>
                 </div>
                 <button class="btn btn-primary" href="#">follow</button>
             </div>
-            <p>    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>{{userprofile.bio}}</p>
             <div class="profile-state">
                 <ul class="profile-Arrange">
                     <li class="profile-details">
                         <a href="#">
                             <span class="profile-label d-block">
-                                Followings
+                                Posts
                             </span>
                             <span class="profile-number">
                                 12
@@ -59,7 +59,7 @@
                                 Tweets
                             </span>
                             <span class="profile-number">
-                                9.45
+                                9K
                             </span>
                         </a>
                     </li>

@@ -22,25 +22,15 @@
                 <form action="" method="post">
                     {% csrf_token %}
                     <h2 class="fontt">Sign Up</h2>
-                    {{form.username | add_class:"textarea"}}
-                    {{form.username.help_text}}
-                    {{form.first_name | add_class:"textarea"}}
-                    {{form.last_name | add_class:"textarea"}}
-                    {{form.email | add_class:"textarea"}}
-                    {{form.password1 | add_class:"textarea"}}
-                    {{form.password1.help_text}}
-                    {{form.password2 | add_class:"textarea"}}
-
-                
-                
-                    {% comment %} <input class="textarea" name="name" type="text" placeholder="First Name">
-                    <input class="textarea" name="lname" type="text" placeholder="Last Name">
-                    <input class="textarea" name="username" type="username" placeholder="Username">
-                    <input class="textarea" name="email" type="email" placeholder="Email">
-                    <input class="textarea" name="password" type="password" placeholder="Password">
-                    <input class="textarea" name="password2" type="password" placeholder="Confirm Your Password">   {% endcomment %}
+                    {% for field in form.visible_fields %}
+                        {{field | add_class:"textarea"}}
+                    {% endfor %}
                     <input type="submit" class="btn btn-primary fontt" value="Create Account" />
                     </form> 
+            </div>
+            <div class="">
+                have an account?
+                <a href="{% url 'login' %}"> Login</a>
             </div>
         </div>
     </div>

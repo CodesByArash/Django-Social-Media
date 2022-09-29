@@ -1,0 +1,38 @@
+{% extends 'base.html'%}
+{% load static %}
+{% load widget_tweaks %}
+
+
+
+{% block title%}{{user.username}}{% endblock %}
+
+
+{% block main %}
+    <div class="middle">
+        <div class="settings">
+            <div class="edit">
+                <div>
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <h2 class="fontt">Edit Profile</h2>
+                        <br>
+                        {{form.username.label}}
+                        {{form.username | add_class:"textarea1"}}
+                        {{form.first_name.label}}
+                        {{form.first_name | add_class:"textarea1"}}
+                        {{form.last_name.label}}
+                        {{form.last_name | add_class:"textarea1"}}
+                        {{form.email.label}}
+                        {{form.email | add_class:"textarea1"}}
+                        {{form.bio.label}}
+                        {{form.bio | add_class:"textarea1"}}
+                        <input type="submit" class="btn btn-primary fontt" value="Change" />
+                        <div class="">
+                            <a href="{% url 'password' %}">Change password?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div> 
+{% endblock %}

@@ -1,11 +1,17 @@
+import imp
+from pyexpat.errors import messages
+from urllib import request
 from django.contrib.auth import authenticate , login
 from .models import User
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404,render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView , DetailView
+from django.views.generic import CreateView , DetailView ,UpdateView
+from django.contrib.auth import logout, update_session_auth_hash
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView as SigninView
-from .forms import UserRegisterForm , UserLoginForm
+from .forms import UserRegisterForm, UserLoginForm, UserSettingsForm, MyPasswordChangeForm
 # Create your views here.
 
 class SignUpView(CreateView):
@@ -13,6 +19,13 @@ class SignUpView(CreateView):
     success_url = reverse_lazy('core.home')
     form_class = UserRegisterForm
     success_message = "Your profile was created successfully"
+    
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return redirect('home')
+        
+        return super().dispatch(request, *args, **kwargs)
+        
     
     
     def form_valid(self, form):
@@ -24,17 +37,15 @@ class SignUpView(CreateView):
         login(self.request, user)
         return to_return
 
+
 class LoginView(SigninView):
     template_name = 'account/login.html'
-    success_url = reverse_lazy('core.home')
+    success_url = reverse_lazy('core:home')
     form_class = UserLoginForm
     success_message = "successfully logged in"
+    
 
-
-# def profile(request):
-#     return render(request, 'account/profile.html')
-
-class ProfileView(DetailView):
+class ProfileView(LoginRequiredMixin,DetailView):
     model = User
     template_name: str = 'account/profile.html'
     context_object_name = 'userprofile'
@@ -46,3 +57,41 @@ class ProfileView(DetailView):
     def get_object(self):
         print(self.kwargs.get('username'))
         return self.get_user_profile(username=self.kwargs.get('username'))
+    
+    
+class SettingsView(LoginRequiredMixin,UpdateView):
+    model = User
+    template_name = 'account/settings.html'
+    success_url = reverse_lazy('settings')
+    fields = ['username', 'email', 'first_name',
+              'last_name', 'bio', ]
+    form = UserSettingsForm
+    
+    def get_object(self):
+            return self.request.user
+
+@login_required
+def PasswordChangeView(request):
+    if request.method == 'POST':
+        password_form = MyPasswordChangeForm(request.user,request.POST)
+        if password_form.is_valid():
+            user=password_form.save()
+            update_session_auth_hash(request, user)
+            # messages.success(request,'Your password wa successfully updated')
+            return redirect('settings')
+        else:
+            pass
+            # messages.error(request,'Please correct  the error below.')
+    else:
+        password_form = MyPasswordChangeForm(request.user)
+        
+    return render(request, 'account/password.html', {
+        'form':password_form
+    })
+
+
+
+@login_required        
+def LogoutView(request):
+    logout(request)
+    return redirect('login')

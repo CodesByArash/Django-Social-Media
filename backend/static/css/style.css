@@ -52,7 +52,7 @@ body{
     height: auto;
     width: auto;
     /* max-width: 340px; */
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, .09);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, .09);
     padding: var(--card-padding);
     margin: 1rem;
     margin-top: 0;
@@ -80,10 +80,10 @@ body{
 }
 
 .profile-img{
-    border: 1px solid var(--color-dark);
     border-radius: 25%;
     height: 100px;
     width: 100px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
 }
 
 .profile-marg{
@@ -170,8 +170,7 @@ ul.profile-Arrange{
     aspect-ratio: 1/1;
     border-radius:50%;
     overflow: hidden;
-    border: 1px solid;
-    border-color: var(--color-dark);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
 }
 
 img{
@@ -216,7 +215,7 @@ nav{
     position: fixed;
     top:0;
     z-index: 10;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, .09);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, .09);
 
 }
 
@@ -280,7 +279,7 @@ main .container .left .profile{
     align-items: center;
     column-gap: 1rem;
     width: 100%;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, .09);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, .09);
 
 }
 
@@ -288,7 +287,7 @@ main .container .left .profile{
     margin-top:1rem;
     background: var(--color-white);
     border-radius: var(--card-border-radius);
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, .09);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, .09);
 
 }
 
@@ -339,11 +338,13 @@ main .container .left .profile{
 
 .left .sidebar .menu-item:first-child.active{
     border-top-left-radius: var(--card-border-radius);
+    border-top-right-radius: var(--card-border-radius);
     overflow: hidden;
 }
 
 .left .sidebar .menu-item:last-child.active{
     border-bottom-left-radius: var(--card-border-radius);
+    border-bottom-right-radius: var(--card-border-radius);
     overflow: hidden;
 }
  
@@ -364,7 +365,7 @@ main .container .left .profile{
     display: grid;
     grid-template-columns: repeat(3,1fr);
     gap: 16px;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, .09);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, .09);
 
     /* grid-auto-rows: 150px; */
 }
@@ -374,6 +375,7 @@ main .container .left .profile{
     overflow: hidden;
     width: 17vw;
     height: 17vw;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
     /* margin: 0rem; */
 }
 
@@ -383,6 +385,7 @@ main .container .left .profile{
     border-radius: var(--card-border-radius);
     padding: var(--card-padding);
     margin: 0 1rem;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.09);
     font-size: 0.85rem;
 }
 
@@ -510,59 +513,49 @@ main .container .right{
     cursor: pointer;
 }
 
-/* .left .post-create{
-    position:absolute;
-    top: 0;
-    left: 110%;
-    width: 30rem;
+
+.settings {
     background: var(--color-white);
     border-radius: var(--card-border-radius);
-    padding: var(--card-padding);
-    box-shadow: 0 0 2rem hsl(var(--color-primary),75%,60% 25%);
-    z-index: 8;
-    display: none;
+    width: 100%;
+    display: grid;
+    align-items: center;
+    margin: 1rem;
+    margin-top: 0;
+    text-align: center;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, .09);
 }
 
-.left .post-create::before{
-    content:"";
-    width: 1.2rem;
-    height:1.2rem;
-    display:block;
+
+.settings .edit{
     background: var(--color-white);
-    position: absolute;
-    left:-0.6rem;
-    transform: rotate(45deg);
+    padding: 1rem;
+    border-radius: var(--card-border-radius);
 }
 
-.left .post-create > div{
+.edit .textarea1{
     display: flex;
-    align-items: start;
-    gap: 1rem;
+    width: 100%;
+    background: var(--color-light);
+    padding: var(--card-padding);
+    margin-top: 1rem;
     margin-bottom: 1rem;
-} */
-
-/*
-.left .post-create .btn{
-    width: 30%; 
-    margin:auto;
-    display:block;
+    font-family: 'Dosis', sans-serif;
+    border-radius: var(--card-border-radius);
+    font-size: 0.9rem;
+    resize: none;
+    max-height: 5rem;
+    position: relative;
 }
 
-.upload {
-    background-color: indigo;
-    color: white;
-    padding: 0.5rem;
-    font-family: sans-serif;
-    border-radius: 0.3rem;
-    cursor: pointer;
-    margin-top: 1rem;
-} */
+
 
 @media screen and (max-width:800px) {
     .container{
         grid-template-columns: 5rem auto 30vw;
         /* gap: 1rem; */
     }
+
     .left{
         width: 5rem;
         z-index:5;
@@ -644,4 +637,20 @@ main .container .right{
     main .container .right{
         display: none;
     }
+
+    .edit .fontt{
+        font-size: 0.6rem;
+    }
+
+    .edit .textarea{
+        font-size: 0.7rem;
+    }
+
+    .edit::before{
+        display: absolute;
+        top:1.3rem;
+        left:calc(20rem - 0.6rem);
+        display: black;
+    }
+
 }
