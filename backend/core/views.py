@@ -8,7 +8,9 @@ from .models import Post
 
 @login_required
 def home(request):
-    return render(request, 'socialmedia/index.html')
+    posts = Post.objects.all()
+    context ={'posts': posts}
+    return render(request, 'socialmedia/index.html',context=context)
 
 
 def post(request,pk):

@@ -391,6 +391,7 @@ main .container .left .profile{
     border-radius: var(--card-border-radius);
     padding: var(--card-padding);
     margin: 0 1rem;
+    margin-bottom: 1rem;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.09);
     font-size: 0.85rem;
 }
