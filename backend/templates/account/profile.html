@@ -1,7 +1,7 @@
 {% extends 'base.html'%}
 {% load static %}
 
-{% block title%}{{userprofile.username}}{% endblock %}
+{% block title%}{{userprofile.user.first_name}} {{userprofile.user.last_name}}{% endblock %}
 
 
 {% block main %}
@@ -71,7 +71,7 @@
         <div class="post">
             {%for field in userprofile.posts%}
                 <div class="photo">
-                    <a href="">
+                    <a href="{% url 'post' pk=field.id%}">
                         <img class="pic" src="{{field.image.url}}">
                     </a>
                 </div>

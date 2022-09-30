@@ -9,40 +9,42 @@
 
 <div class="middle">
     <!------------------------middle---------------------->
-    <div class="feeds">
-        <div class="feed">
-            <div class="head">
-                <div class="user">
-                    <div class="profile-photo">
-                        <img src="{% static 'images/profile_photo.png' %}">
-                    </div>
-                    <div class="ingo">
-                        <h3>Keyhan</h3>
-                        <small>Date and Time</small>
+    {% for field in posts %}
+        <div class="feeds">
+            <div class="feed">
+                <div class="head">
+                    <div class="user">
+                        <div class="profile-photo">
+                            <img src="{% static 'images/profile_photo.png' %}">
+                        </div>
+                        <div class="ingo">
+                            <h3>{{field.user.username}}</h3>
+                            <small>{{field.creation_time}}</small>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="photo">
-                <img src="{% static 'images/profile_photo.png' %}" alt="">
-            </div>
-            <div class="action-button">
-                <div class="interaction-buttons">
-                  <span><i class="bi bi-suit-heart"></i></span>  
-                  <span class="text-muted">5 Likes</span>
+                <div class="photo">
+                    <img src="{{field.image.url}}" alt="">
                 </div>
+                <div class="action-button">
+                    <div class="interaction-buttons">
+                    <span><i class="bi bi-suit-heart"></i></span>  
+                    <span class="text-muted">{{field.like_no}} Likes</span>
+                    </div>
+                </div>
+                <div class="caption">
+                    <p>
+                        <b>
+                            {{field.user.username}}
+                        </b>
+                        {{field.caption}}
+                    </p>
+                </div>
+                
             </div>
-            <div class="caption">
-                <p>
-                    <b>
-                        Ghasem
-                    </b>
-                    Lorem ipsum dolor sit amet.
-                </p>
-            </div>
-            
         </div>
-    </div>
+    {%endfor%}
 </div>
 <div class="right">
     <!-- ----------------------right---------------------- -->
@@ -55,7 +57,7 @@
                     <img src="{% static 'images/profile_photo.png' %}">
                 </div>
                 <div class="ingo">
-                    <h3>Kian Sadeghi</h3>
+                    <h3>Milad Jafary</h3>
                 </div>
         </div>
     </div>
