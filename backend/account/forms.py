@@ -32,8 +32,6 @@ class UserRegisterForm(UserCreationForm):
 
 
 
-
-
 class UserSettingsForm(UserChangeForm):
     email = forms.CharField(widget= forms.EmailInput
                            (attrs={'placeholder':'Email*'}))
@@ -67,7 +65,6 @@ class MyPasswordChangeForm(PasswordChangeForm):
     new_password2 =forms.CharField(widget=forms.PasswordInput
                                  (attrs={'placeholder':'Confirm Password*'}))
     
-
 
 
 class UserLoginForm(AuthenticationForm):

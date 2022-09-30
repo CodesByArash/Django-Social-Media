@@ -5,6 +5,9 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class User(AbstractUser):
-    bio = models.TextField(blank=True, max_length=500)
+    bio         = models.TextField(blank=True, max_length=500)
     profile_img = models.ImageField(upload_to='profile_images',default='/profile_images/default.png')
+    followers   = models.IntegerField(default=0)
+    followings  = models.IntegerField(default=0)
+    posts       = models.IntegerField(default=0)
     

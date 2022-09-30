@@ -10,7 +10,6 @@
     {% comment %} {{userprofile.username}} {% endcomment %}
     
 <div class="middle">
-
     <div class="wrapper">
         <a href="profile-bg d-block"></a>
         <div>
@@ -21,16 +20,16 @@
                     </a>
                     <div class="profile-marg">
                         <div class="">
-                            <p class="profile-name">{{userprofile.first_name}} {{userprofile.last_name}}</p>
+                            <p class="profile-name">{{userprofile.user.first_name}} {{userprofile.user.last_name}}</p>
                             <span>
-                                <a href="#">@<span>{{userprofile.username}}</span></a>
+                                <a href="#">@<span>{{userprofile.user.username}}</span></a>
                             </span>
                         </div>
                     </div>
                 </div>
                 <button class="btn btn-primary" href="#">follow</button>
             </div>
-            <p>{{userprofile.bio}}</p>
+            <p>{{userprofile.user.bio}}</p>
             <div class="profile-state">
                 <ul class="profile-Arrange">
                     <li class="profile-details">
@@ -39,7 +38,7 @@
                                 Posts
                             </span>
                             <span class="profile-number">
-                                12
+                                {{userprofile.user.posts}}
                             </span>
                         </a>
                     </li>
@@ -49,17 +48,17 @@
                                 Followers
                             </span>
                             <span class="profile-number">
-                                123K
+                                {{userprofile.user.followers}}
                             </span>
                         </a>
                     </li>
                     <li class="profile-details">
                         <a href="#">
                             <span class="profile-label d-block">
-                                Tweets
+                                Followings
                             </span>
                             <span class="profile-number">
-                                9K
+                                {{userprofile.user.followings}}
                             </span>
                         </a>
                     </li>
@@ -70,31 +69,13 @@
 
     <div class="profileposts">
         <div class="post">
-            <div class="photo">
-                <a href="">
-                <img src="{% static 'images/profile_photo.png' %}" alt="">
-                </a>
-            </div>
-            <div class="photo">
-                <a href="">
-                    <img src="{% static 'images/profile_photo.png' %}" alt="">
-                </a>
-            </div>
-            <div class="photo">
-                <a href="">
-                    <img src="{% static 'images/profile_photo.png' %}" alt="">
-                </a>
-            </div>
-            <div class="photo">
-                <a href="">
-                    <img src="{% static 'images/profile_photo.png' %}" alt="">
-                </a>
-            </div>
-            <div class="photo">
-                <a href="">
-                    <img src="{% static 'images/profile_photo.png' %}" alt="">
-                </a>
-            </div>
+            {%for field in userprofile.posts%}
+                <div class="photo">
+                    <a href="">
+                        <img class="pic" src="{{field.image.url}}">
+                    </a>
+                </div>
+            {%endfor%}
         </div>
     </div>
 </div>

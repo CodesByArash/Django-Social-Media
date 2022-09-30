@@ -1,18 +1,18 @@
-import imp
 from pyexpat.errors import messages
 from urllib import request
 from django.contrib.auth import authenticate , login
 from .models import User
+from core.models import Post
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404,render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView , DetailView ,UpdateView
+from django.views.generic import CreateView , DetailView ,UpdateView,ListView
 from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView as SigninView
 from .forms import UserRegisterForm, UserLoginForm, UserSettingsForm, MyPasswordChangeForm
-# Create your views here.
+
 
 class SignUpView(CreateView):
     template_name = 'account/signup.html'
@@ -45,7 +45,7 @@ class LoginView(SigninView):
     success_message = "successfully logged in"
     
 
-class ProfileView(LoginRequiredMixin,DetailView):
+class ProfileView(LoginRequiredMixin,ListView):
     model = User
     template_name: str = 'account/profile.html'
     context_object_name = 'userprofile'
@@ -54,11 +54,17 @@ class ProfileView(LoginRequiredMixin,DetailView):
         # print(username)
         return get_object_or_404(User, username=username)
     
-    def get_object(self):
+    
+    def get_queryset(self):
         print(self.kwargs.get('username'))
-        return self.get_user_profile(username=self.kwargs.get('username'))
+        context_data = {}
+        user = self.get_user_profile(username=self.kwargs.get('username'))
+        context_data['user'] = user
+        context_data['posts'] = Post.objects.filter(user=user)
+        return context_data
+
     
-    
+  
 class SettingsView(LoginRequiredMixin,UpdateView):
     model = User
     template_name = 'account/settings.html'
@@ -69,6 +75,7 @@ class SettingsView(LoginRequiredMixin,UpdateView):
     
     def get_object(self):
             return self.request.user
+
 
 @login_required
 def PasswordChangeView(request):
@@ -88,7 +95,6 @@ def PasswordChangeView(request):
     return render(request, 'account/password.html', {
         'form':password_form
     })
-
 
 
 @login_required        
