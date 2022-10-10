@@ -9,7 +9,9 @@
                             <img src="{% static 'images/profile_photo.png' %}">
                         </div>
                         <div class="ingo">
-                            <h3>{{field.0.user.username}}</h3>
+                            <a href="{% url 'profile' username=user.username %}" style="color:black;">
+                                <h3>{{field.0.user.username}}</h3>
+                            </a>
                             <small>{{field.0.creation_time}}</small>
                         </div>
                     </div>
@@ -26,13 +28,21 @@
                     {% else %}
                         <span><a href="{% url "like" %}?post_id={{field.0.id}}" class="bi bi-suit-heart-fill"></a></span>
                     {% endif %}
+                    {% if field.0.like_no == 0 %}
+                    <span class="text-muted">No Likes</span>
+                    {% elif field.0.like_no == 1%}
+                    <span class="text-muted">{{field.0.like_no}} Like</span>
+                    {% else %}
                     <span class="text-muted">{{field.0.like_no}} Likes</span>
+                    {% endif %}
                     </div>
                 </div>
                 <div class="caption">
                     <p>
                         <b>
-                            {{field.0.user.username}}
+                            <a href="{% url 'profile' username=user.username %}" style="color:black;" >
+                                {{field.0.user.username}}
+                            </a>
                         </b>
                         {{field.0.caption}}
                     </p>

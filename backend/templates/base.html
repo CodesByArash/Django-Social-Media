@@ -35,7 +35,7 @@
         <div class="container container1">
             <div class="left">
                 <!------------------------left------------------------>
-                <a href="" class="profile">
+                <a href="{% url 'profile' username=user.username %}" class="profile">
                     <div class="profile-photo">
                         <img src="{{user.profile_img.url}}" alt="profpic">
                     </div>

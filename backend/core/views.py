@@ -56,3 +56,8 @@ def like(request):
         post.like_no -= 1
         post.save()
         return redirect('home')
+    
+
+@login_required
+def follow(request):
+    pass
