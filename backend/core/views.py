@@ -1,8 +1,8 @@
 from multiprocessing import context
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from .models import Post
+from .models import *
 # Create your views here.
 
 
@@ -17,17 +17,42 @@ def home(request):
         return redirect('home')
 
     posts = Post.objects.all().order_by('-creation_time')
+    like_list = []
+    for post in posts:
+        is_liked = Like.objects.filter(user=request.user, post= post).first()
+        if is_liked is None:
+            like_list.append(False)
+        else:
+            like_list.append(True)
+    posts = zip(posts,like_list)
+    
+    print(posts)
     context ={'posts': posts}
     return render(request, 'socialmedia/index.html',context=context)
 
 
 @login_required
 def post(request,pk):
-    post = Post.objects.filter(id=pk)
+    post = get_list_or_404(Post,id=pk)
     context ={'posts': post}
     return render(request ,'socialmedia/post-detail.html' ,context=context)
 
 
 @login_required
 def like(request):
-    pass
+    user = request.user
+    post_id = request.GET.get('post_id')
+    post    = get_object_or_404(Post,id=post_id)
+    liked = Like.objects.filter(user=user,post=post).first()
+    
+    if liked is None:
+        like = Like.objects.create(post=post,user=user)
+        like.save()
+        post.like_no += 1
+        post.save()
+        return redirect('home')
+    else:
+        liked.delete()
+        post.like_no -= 1
+        post.save()
+        return redirect('home')
