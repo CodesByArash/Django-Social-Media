@@ -1,5 +1,5 @@
 {% load static %}
- 
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -62,8 +62,8 @@
                         <h3>Settings</h3>
                     </a>
                 </div>
-                <label class="createe btn btn-primary " id="create" for="create-post">Create Post</label>
-                
+                {% comment %} <label class="createe btn btn-primary " id="create" for="create-post">Create Post</label> {% endcomment %}
+
             </div>
 
             {% block main %}
@@ -72,8 +72,7 @@
 
         </div>
     </main>
-
-
+{% comment %} 
     <div class="addpost">
         <div class="post-create">
             <div>
@@ -86,10 +85,22 @@
                 <textarea class="textarea " placeholder="Add Caption ...."></textarea> 
                 <label type="submit" class="btn btn-primary fontt" for="">Post</label>
             </div>
-        </div>
+        </div> {% endcomment %}
     </div>
 
 
     <script src="{% static 'js/index.js' %}"></script>
+    <script type="text/javascript">
+        function showPreview(event){
+            if(event.target.files.length > 0){
+            var src = URL.createObjectURL(event.target.files[0]);
+            var preview = document.getElementById("file-ip-1-preview");
+            preview.src = src;
+            preview.style.display = "block";
+            }
+        }
+    </script>
 </body>
 </html>
+
+

@@ -1,0 +1,38 @@
+{% load static %}
+
+<div class="feeds">
+    {% for field in posts %}
+            <div class="feed">
+                <div class="head">
+                    <div class="user">
+                        <div class="profile-photo">
+                            <img src="{% static 'images/profile_photo.png' %}">
+                        </div>
+                        <div class="ingo">
+                            <h3>{{field.user.username}}</h3>
+                            <small>{{field.creation_time}}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="photo">
+                    <img src="{{field.image.url}}" alt="">
+                </div>
+                <div class="action-button">
+                    <div class="interaction-buttons">
+                    <span><a href="{% url "like" %}?post_id={{field.id}}" class="bi bi-suit-heart"></a></span>
+                    <span class="text-muted">{{field.like_no}} Likes</span>
+                    </div>
+                </div>
+                <div class="caption">
+                    <p>
+                        <b>
+                            {{field.user.username}}
+                        </b>
+                        {{field.caption}}
+                    </p>
+                </div>
+                
+            </div>
+    {%endfor%}
+</div>

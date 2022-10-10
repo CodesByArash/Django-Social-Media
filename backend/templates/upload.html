@@ -1,0 +1,14 @@
+    <div class="center">
+        <div class="form-input">
+            <form action="{% url "home" %}" enctype="multipart/form-data" method="post">
+                {% csrf_token %}
+                <div class="preview">
+                    <img id="file-ip-1-preview">
+                </div>
+                <label for="file-ip-1">Upload Image</label>
+                <input name='img' type="file" id="file-ip-1" accept="image/*" onchange="showPreview(event);">
+                <textarea name='caption' placeholder="Caption" class="textarea2"></textarea>
+                <input type="submit" class="btn btn-primary inp1" value="Post">
+            </form>
+        </div>
+    </div>

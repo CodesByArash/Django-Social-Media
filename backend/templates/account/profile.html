@@ -27,7 +27,12 @@
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-primary" href="#">follow</button>
+                {% if request.user != userprofile.user %}
+                    <button class="btn btn-primary" href="#">Follow</button>
+                {% else %}
+                    <button class="btn btn-primary" href="#">Edit Profile</button>
+                {% endif %}
+                
             </div>
             <p>{{userprofile.user.bio}}</p>
             <div class="profile-state">
@@ -75,10 +80,16 @@
                         <img class="pic" src="{{field.image.url}}">
                     </a>
                 </div>
+            {% empty %}
+                <label class="">No posts available</label>
             {%endfor%}
         </div>
     </div>
 </div>
+
+<div class="right">
+
+</div> 
 
     
 {% endblock %}
