@@ -33,8 +33,17 @@ def home(request):
 
 @login_required
 def post(request,pk):
-    post = get_list_or_404(Post,id=pk)
-    context ={'posts': post}
+    posts = get_list_or_404(Post,id=pk)
+    like_list = []
+    for post in posts:
+        is_liked = Like.objects.filter(user=request.user, post= post).first()
+        if is_liked is None:
+            like_list.append(False)
+        else:
+            like_list.append(True)
+    posts = zip(posts,like_list)
+    print(posts)
+    context ={'posts': posts}
     return render(request ,'socialmedia/post-detail.html' ,context=context)
 
 
