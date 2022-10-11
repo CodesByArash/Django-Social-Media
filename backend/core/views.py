@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404, get_list_or_40
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from .models import *
+from account.models import *
+
 # Create your views here.
 
 
@@ -13,6 +15,8 @@ def home(request):
         caption = request.POST.get('caption')
         new_post = Post.objects.create(user=user, image=image, caption=caption)
         new_post.save()
+        user.posts+=1
+        user.save()
         return redirect('home')
 
     posts = Post.objects.all().order_by('-creation_time')
@@ -28,6 +32,7 @@ def home(request):
     print(posts)
     context ={'posts': posts}
     return render(request, 'socialmedia/index.html',context=context)
+
 
 
 @login_required
@@ -46,6 +51,7 @@ def post(request,pk):
     return render(request ,'socialmedia/post-detail.html' ,context=context)
 
 
+
 @login_required
 def like(request):
     user = request.user
@@ -59,14 +65,39 @@ def like(request):
         like.save()
         post.like_no += 1
         post.save()
-        return HttpResponseRedirect(next)
     else:
         liked.delete()
         post.like_no -= 1
         post.save()
-        return HttpResponseRedirect(next)
     
+    return HttpResponseRedirect(next)
+    
+
 
 @login_required
 def follow(request):
-    pass
+    follower = request.user
+    username = request.GET.get('username')
+    next = request.GET.get('next')
+    followed = get_object_or_404(User,username=username)
+    follows  = Follow.objects.filter(user=followed,follower=follower).first()
+    
+    if follows is None:
+        follow_relation = Follow.objects.create(user=followed, follower=follower)
+        follow_relation.save()
+        follower.followings += 1
+        follower.save()
+        followed.followers  += 1
+        followed.save()
+    else:
+        follows.delete()
+        follower.followings -= 1
+        follower.save()
+        followed.followers  -= 1
+        followed.save()
+        
+    return HttpResponseRedirect(next)
+    
+    
+    
+    

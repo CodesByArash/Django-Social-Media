@@ -1,7 +1,9 @@
 from pyexpat.errors import messages
 from urllib import request
 from django.contrib.auth import authenticate , login
+
 from .models import User
+from core.models import *
 from core.models import Post
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404,render
@@ -58,9 +60,16 @@ class ProfileView(LoginRequiredMixin,ListView):
     def get_queryset(self):
         print(self.kwargs.get('username'))
         context_data = {}
-        user = self.get_user_profile(username=self.kwargs.get('username'))
+        username=self.kwargs.get('username')
+        user = self.get_user_profile(username=username)
         context_data['user'] = user
         context_data['posts'] = Post.objects.filter(user=user)
+        follow_relation = Follow.objects.filter(user=user,follower=self.request.user).first()
+        if(follow_relation is None):
+            context_data['unfollow'] = False
+        else:
+            context_data['unfollow'] = True
+            
         return context_data
 
     

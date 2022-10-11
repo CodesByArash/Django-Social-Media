@@ -1,13 +1,13 @@
 {% extends 'base.html'%}
 {% load static %}
+{% load widget_tweaks %}
+
 
 {% block title%}{{userprofile.user.first_name}} {{userprofile.user.last_name}}{% endblock %}
 
 
 {% block main %}
 
-
-    {% comment %} {{userprofile.username}} {% endcomment %}
     
 <div class="middle">
     <div class="wrapper">
@@ -28,9 +28,13 @@
                     </div>
                 </div>
                 {% if request.user != userprofile.user %}
-                    <button class="btn btn-primary" href="#">Follow</button>
+                    {% if userprofile.unfollow == True %}
+                        <a class="btn btn-primary" href="{% url "follow" %}?username={{userprofile.user.username}}&amp;next={{ request.path|urlencode }}">Unfollow</a>
+                    {% else %}
+                        <a class="btn btn-primary" href="{% url "follow" %}?username={{userprofile.user.username}}&amp;next={{ request.path|urlencode }}">Follow</a>
+                    {% endif %}
                 {% else %}
-                    <button class="btn btn-primary" href="#">Edit Profile</button>
+                    <a class="btn btn-primary" href="#">Edit Profile</a>
                 {% endif %}
                 
             </div>
