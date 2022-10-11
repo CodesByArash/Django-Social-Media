@@ -1,5 +1,4 @@
-from multiprocessing import context
-from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
+from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404, HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from .models import *
@@ -53,18 +52,19 @@ def like(request):
     post_id = request.GET.get('post_id')
     post    = get_object_or_404(Post,id=post_id)
     liked = Like.objects.filter(user=user,post=post).first()
-    
+    next = request.GET.get('next')
+
     if liked is None:
         like = Like.objects.create(post=post,user=user)
         like.save()
         post.like_no += 1
         post.save()
-        return redirect('home')
+        return HttpResponseRedirect(next)
     else:
         liked.delete()
         post.like_no -= 1
         post.save()
-        return redirect('home')
+        return HttpResponseRedirect(next)
     
 
 @login_required
