@@ -6,9 +6,26 @@
                     <img id="file-ip-1-preview">
                 </div>
                 <label for="file-ip-1">Upload Image</label>
-                <input name='img' type="file" id="file-ip-1" accept="image/*" onchange="showPreview(event);">
+                <input name='img' type="file" id="file-ip-1" accept="image/png, image/gif, image/jpeg" onchange="showPreview(event);">
                 <textarea name='caption' placeholder="Caption" class="textarea2"></textarea>
                 <input type="submit" class="btn btn-primary inp1" value="Post">
             </form>
         </div>
     </div>
+    {% comment %} {% load widget_tweaks %}
+
+    <div class="center">
+        <div class="form-input">
+            <form action="{% url "home" %}" enctype="multipart/form-data" method="post">
+                {% csrf_token %}
+                <div class="preview">
+                    <img id="file-ip-1-preview">
+                </div>
+                <label for="file-ip-1">Upload Image</label>
+                {{ form.image|attr:"name:img"|attr:"type:file"|attr:"id:file-ip-1"|attr:"accept:image/*"|attr:"onchange:showPreview(event);" }}
+                {{ form.caption|attr:"name:caption"|attr:"placehorlder:Caption"|attr:"class:textarea2" | attr:"rows:3"}}
+                <input type="submit" class="btn btn-primary inp1" value="Post">
+            </form>
+        </div>
+    </div>
+     {% endcomment %}

@@ -1,5 +1,4 @@
 from datetime import datetime
-from time import time
 from uuid import uuid4
 from django.db import models
 from account.models import *

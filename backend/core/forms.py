@@ -1,19 +1,27 @@
-from django.contrib.auth.forms import UserCreationForm ,AuthenticationForm,UserChangeForm
+from django.forms import ModelForm
 from .models import Post
 from django import forms
 
 
 
-# class UserRegisterForm(UserCreationForm):
-#     caption = forms.CharField(widget= forms.EmailInput
-#                            (attrs={'placeholder':'Email*'}))
+class PostUploadForm(ModelForm):
+    caption = forms.CharField(widget= forms.Textarea
+                           (attrs={'placeholder':'Caption'}))
     
-#     image = forms.CharField(widget= forms.ImageField
-#                                (attrs={'placeholder':'Username*'}))
+    image = forms.ImageField()
     
-    
-#     class Meta:
-#         model = Post
-#         fields = ['image','caption','user']
+    def save(self, commit=True,*args, **kwargs):
+        self.cleaned_data['user']=kwargs['user']
+        return super(PostUploadForm, self).save(commit=commit)
+        
+        
+        
+    class Meta:
+        model = Post
+        fields = ['image','caption',]
+        
+
+        
+        
         
         

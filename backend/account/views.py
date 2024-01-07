@@ -1,4 +1,5 @@
 from pyexpat.errors import messages
+from typing import Any
 from urllib import request
 from django.contrib.auth import authenticate , login
 
@@ -18,7 +19,7 @@ from .forms import UserRegisterForm, UserLoginForm, UserSettingsForm, MyPassword
 
 class SignUpView(CreateView):
     template_name = 'account/signup.html'
-    success_url = reverse_lazy('core.home')
+    success_url = reverse_lazy('home')
     form_class = UserRegisterForm
     success_message = "Your profile was created successfully"
     
@@ -47,32 +48,29 @@ class LoginView(SigninView):
     success_message = "successfully logged in"
     
 
-class ProfileView(LoginRequiredMixin,ListView):
+class ProfileView(LoginRequiredMixin,DetailView):
     model = User
     template_name: str = 'account/profile.html'
-    context_object_name = 'userprofile'
     
-    def get_user_profile(self, username):
-        # print(username)
-        return get_object_or_404(User, username=username)
-    
-    
-    def get_queryset(self):
-        print(self.kwargs.get('username'))
-        context_data = {}
+    def get_object(self):
         username=self.kwargs.get('username')
-        user = self.get_user_profile(username=username)
-        context_data['user'] = user
-        context_data['posts'] = Post.objects.filter(user=user)
-        follow_relation = Follow.objects.filter(user=user,follower=self.request.user).first()
+        user = get_object_or_404(User, username=username)
+        return user    
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context_data = super().get_context_data(**kwargs)
+        context_data['post'] = Post.objects.filter(user=context_data['object'])
+        follow_relation = Follow.objects.filter(user=context_data['object'],follower=self.request.user).first()
         if(follow_relation is None):
             context_data['unfollow'] = False
         else:
             context_data['unfollow'] = True
-            
+        print(context_data)
+
         return context_data
 
-    
+
+
   
 class SettingsView(LoginRequiredMixin,UpdateView):
     model = User

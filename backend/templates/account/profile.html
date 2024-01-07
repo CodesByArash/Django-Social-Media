@@ -3,7 +3,7 @@
 {% load widget_tweaks %}
 
 
-{% block title%}{{userprofile.user.first_name}} {{userprofile.user.last_name}}{% endblock %}
+{% block title%}{{request.user.first_name}} {{request.user.last_name}}{% endblock %}
 
 
 {% block main %}
@@ -20,25 +20,25 @@
                     </a>
                     <div class="profile-marg">
                         <div class="">
-                            <p class="profile-name">{{userprofile.user.first_name}} {{userprofile.user.last_name}}</p>
+                            <p class="profile-name">{{object.first_name}} {{object.last_name}}</p>
                             <span>
-                                <a href="#">@<span>{{userprofile.user.username}}</span></a>
+                                <a href="#">@<span>{{object.username}}</span></a>
                             </span>
                         </div>
                     </div>
                 </div>
-                {% if request.user != userprofile.user %}
-                    {% if userprofile.unfollow == True %}
-                        <a class="btn btn-primary" href="{% url "follow" %}?username={{userprofile.user.username}}&amp;next={{ request.path|urlencode }}">Unfollow</a>
+                {% if request.user != object %}
+                    {% if unfollow == True %}
+                        <a class="btn btn-primary" href="{% url "follow" %}?username={{object.username}}&amp;next={{ request.path|urlencode }}">Unfollow</a>
                     {% else %}
-                        <a class="btn btn-primary" href="{% url "follow" %}?username={{userprofile.user.username}}&amp;next={{ request.path|urlencode }}">Follow</a>
+                        <a class="btn btn-primary" href="{% url "follow" %}?username={{object.username}}&amp;next={{ request.path|urlencode }}">Follow</a>
                     {% endif %}
                 {% else %}
                     <a class="btn btn-primary" href="#">Edit Profile</a>
                 {% endif %}
                 
             </div>
-            <p>{{userprofile.user.bio}}</p>
+            <p>{{object.bio}}</p>
             <div class="profile-state">
                 <ul class="profile-Arrange">
                     <li class="profile-details">
@@ -47,7 +47,7 @@
                                 Posts
                             </span>
                             <span class="profile-number">
-                                {{userprofile.user.posts}}
+                                {{object.posts}}
                             </span>
                         </a>
                     </li>
@@ -57,7 +57,7 @@
                                 Followers
                             </span>
                             <span class="profile-number">
-                                {{userprofile.user.followers}}
+                                {{object.followers}}
                             </span>
                         </a>
                     </li>
@@ -67,7 +67,7 @@
                                 Followings
                             </span>
                             <span class="profile-number">
-                                {{userprofile.user.followings}}
+                                {{object.followings}}
                             </span>
                         </a>
                     </li>
@@ -78,7 +78,7 @@
 
     <div class="profileposts">
         <div class="post">
-            {%for field in userprofile.posts%}
+            {%for field in post%}
                 <div class="photo">
                     <a href="{% url 'post' pk=field.id%}">
                         <img class="pic" src="{{field.image.url}}">
