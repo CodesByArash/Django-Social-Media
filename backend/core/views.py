@@ -26,6 +26,8 @@ class index(LoginRequiredMixin,ListView):
         
         # upload post without forms
         image = request.FILES.get('img')
+        if not image:
+            pass
         user  = request.user
         caption = request.POST.get('caption')
         new_post = Post.objects.create(user=user, image=image, caption=caption)
@@ -146,29 +148,7 @@ def deletepost(request):
     
 
 
-@login_required
-def follow(request):
-    follower = request.user
-    username = request.GET.get('username')
-    next = request.GET.get('next')
-    followed = get_object_or_404(User,username=username)
-    follows  = Follow.objects.filter(user=followed,follower=follower).first()
-    
-    if follows is None:
-        follow_relation = Follow.objects.create(user=followed, follower=follower)
-        follow_relation.save()
-        follower.followings += 1
-        follower.save()
-        followed.followers  += 1
-        followed.save()
-    else:
-        follows.delete()
-        follower.followings -= 1
-        follower.save()
-        followed.followers  -= 1
-        followed.save()
-        
-    return HttpResponseRedirect(next)
+
     
     
     

@@ -68,8 +68,8 @@ class MyPasswordChangeForm(PasswordChangeForm):
 
 
 class UserLoginForm(AuthenticationForm):
-    username = forms.CharField(widget= forms.TextInput
-                                 (attrs={'placeholder':'Username*'})
+    email = forms.CharField(widget= forms.TextInput
+                                 (attrs={'placeholder':'Username or Email*'})
                                  ,help_text=mark_safe("Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."))
     
     password  = forms.CharField(widget=forms.PasswordInput

@@ -1,13 +1,9 @@
-from pyexpat.errors import messages
-from typing import Any
-from urllib import request
 from django.contrib.auth import authenticate , login
-
+from django.contrib import messages
 from .models import User
 from core.models import *
 from core.models import Post
-from django.shortcuts import redirect
-from django.shortcuts import get_object_or_404,render
+from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView , DetailView ,UpdateView,ListView
 from django.contrib.auth import logout, update_session_auth_hash
@@ -29,7 +25,6 @@ class SignUpView(CreateView):
         
         return super().dispatch(request, *args, **kwargs)
         
-    
     
     def form_valid(self, form):
         to_return = super().form_valid(form)
@@ -57,7 +52,7 @@ class ProfileView(LoginRequiredMixin,DetailView):
         user = get_object_or_404(User, username=username)
         return user    
     
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         context_data['post'] = Post.objects.filter(user=context_data['object'])
         follow_relation = Follow.objects.filter(user=context_data['object'],follower=self.request.user).first()
@@ -65,7 +60,6 @@ class ProfileView(LoginRequiredMixin,DetailView):
             context_data['unfollow'] = False
         else:
             context_data['unfollow'] = True
-        print(context_data)
 
         return context_data
 
@@ -76,8 +70,7 @@ class SettingsView(LoginRequiredMixin,UpdateView):
     model = User
     template_name = 'account/settings.html'
     success_url = reverse_lazy('settings')
-    fields = ['username', 'email', 'first_name',
-              'last_name', 'bio', ]
+    fields = ['username', 'email', 'first_name', 'last_name', 'bio', ]
     form = UserSettingsForm
     
     def get_object(self):
@@ -91,7 +84,7 @@ def PasswordChangeView(request):
         if password_form.is_valid():
             user=password_form.save()
             update_session_auth_hash(request, user)
-            # messages.success(request,'Your password wa successfully updated')
+            messages.success(request,'Your password wa successfully updated')
             return redirect('settings')
         else:
             pass
@@ -108,3 +101,28 @@ def PasswordChangeView(request):
 def LogoutView(request):
     logout(request)
     return redirect('login')
+
+
+@login_required
+def follow(request):
+    follower = request.user
+    username = request.GET.get('username')
+    next = request.GET.get('next')
+    followed = get_object_or_404(User,username=username)
+    follows  = Follow.objects.filter(user=followed,follower=follower).first()
+    
+    if follows is None:
+        follow_relation = Follow.objects.create(user=followed, follower=follower)
+        follow_relation.save()
+        follower.followings += 1
+        follower.save()
+        followed.followers  += 1
+        followed.save()
+    else:
+        follows.delete()
+        follower.followings -= 1
+        follower.save()
+        followed.followers  -= 1
+        followed.save()
+        
+    return HttpResponseRedirect(next)
