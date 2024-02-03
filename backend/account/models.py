@@ -40,6 +40,8 @@ class User(AbstractUser):
     followers   = models.IntegerField(default=0)
     followings  = models.IntegerField(default=0)
     posts       = models.IntegerField(default=0)
+    # following   = models.ManyToManyField('self', through='Follow', symmetrical=False, related_name='followers')
+
 
     # objects = CustomUserManager()
 
