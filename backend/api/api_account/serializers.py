@@ -1,31 +1,28 @@
-from account.models import *
+from django.contrib.auth.hashers import check_password
+
 from rest_framework import serializers
 
+from account.models import *
 
-class ChangePasswordSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True)
-    password2 = serializers.CharField(write_only=True, required=True)
-    old_password = serializers.CharField(write_only=True, required=True)
 
-    class Meta:
-        model = User
-        fields = ('old_password', 'password', 'password2')
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(write_only=True)
+    new_password = serializers.CharField(write_only=True)
+    confirm_new_password = serializers.CharField(write_only=True)
 
-    def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError({"password": "Password fields didn't match."})
-
-        return attrs
-
-    def validate_old_password(self, value):
+    def validate(self, data):
         user = self.context['request'].user
-        if not user.check_password(value):
-            raise serializers.ValidationError({"old_password": "Old password is not correct"})
-        return value
 
-    def update(self, instance, validated_data):
+        # check old password
+        if not check_password(data.get('old_password'), user.password):
+            raise serializers.ValidationError('Invalid password')
 
-        instance.set_password(validated_data['password'])
-        instance.save()
-        
-        return instance
+        # new password should not be the same as old password
+        if check_password(data.get('new_password'), user.password):
+            raise serializers.ValidationError('New password must be different from old password')
+
+        # validate new password
+        if data['new_password'] != data['confirm_new_password']:
+            raise serializers.ValidationError("The new password and confirmation do not match.")
+
+        return data.get('new_password')
