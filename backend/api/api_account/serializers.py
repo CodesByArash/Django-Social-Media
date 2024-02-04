@@ -1,13 +1,12 @@
 from django.contrib.auth.hashers import check_password
-
 from rest_framework import serializers
-
 from account.models import *
 
 
+
 class ChangePasswordSerializer(serializers.Serializer):
-    old_password = serializers.CharField(write_only=True)
-    new_password = serializers.CharField(write_only=True)
+    old_password         = serializers.CharField(write_only=True)
+    new_password         = serializers.CharField(write_only=True)
     confirm_new_password = serializers.CharField(write_only=True)
 
     def validate(self, data):
@@ -26,3 +25,23 @@ class ChangePasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError("The new password and confirmation do not match.")
 
         return data.get('new_password')
+    
+
+
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'bio']
+
+    
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id','username', 'email', 'first_name', 'last_name', 'bio']
+
+
+class UserProfileCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password']
