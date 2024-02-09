@@ -58,8 +58,7 @@ To run the tests, `cd` into the directory where `manage.py` is:
 
 ```
 ## API Docs 
-  navigate to `http://127.0.0.1:8000/swagger/`
-  navigate to `http://127.0.0.1:8000/redoc/`
+  navigate to `http://127.0.0.1:8000/swagger/` and navigate to `http://127.0.0.1:8000/redoc/`
   
 ## Features
  rest api using drf,
