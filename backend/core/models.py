@@ -13,6 +13,8 @@ class Post(models.Model):
     caption       = models.TextField()
     creation_time = models.DateTimeField(default=datetime.now)
     like_no       = models.IntegerField(default=0)
+    # liked_by   = models.ManyToManyField('self', through='Follow', symmetrical=False, related_name='liked')
+
     
     def __str__(self):
         return self.user.username

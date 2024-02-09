@@ -45,7 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    # restframework api documentation
+    'django.contrib.staticfiles',  # required for serving swagger ui's css/js files
+    'drf_yasg',
     # third party apps
     'crispy_forms',
     'widget_tweaks',
@@ -59,7 +61,6 @@ INSTALLED_APPS = [
     # restframework apps
     'api.api_account',
     'api.api_core',
-
 ]
 
 MIDDLEWARE = [
