@@ -4,96 +4,38 @@ from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.generic import DeleteView
+from django.views import View
 from .forms import *
 from .models import *
 from account.models import *
 
-# Create your views here.
 
+@login_required
+def home(request):
+    if request.method == 'POST':
+        form = PostUploadForm(request.POST, request.FILES)
+        user = request.user
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.user=user
+            post.save()
+            user.posts+=1
+            user.save()
+    else:
+        form = PostUploadForm()
 
-class index(LoginRequiredMixin,ListView):
-    # form_class = PostUploadForm
-    
-    def post(self, request):
-        # form = self.form_class(request.POST, request.FILES)
+    posts = Post.objects.all().order_by('-creation_time')
+    like_list = []
+    for post in posts:
+        is_liked = Like.objects.filter(user=request.user, post= post).first()
+        if is_liked is None:
+            like_list.append(False)
+        else:
+            like_list.append(True)
+    posts = zip(posts,like_list)
+    context = {'posts': posts, 'form':form}
         
-        # if form.is_valid():
-        #     form.save(user=self.request.user)
-        # else:
-        #     print(form.errors)
-        #     print("arash")
-
-        
-        # upload post without forms
-        image = request.FILES.get('img')
-        if not image:
-            pass
-        user  = request.user
-        caption = request.POST.get('caption')
-        new_post = Post.objects.create(user=user, image=image, caption=caption)
-        new_post.save()
-        user.posts+=1
-        user.save()
-        
-        
-        posts = Post.objects.all().order_by('-creation_time')
-        like_list = []
-        for post in posts:
-            is_liked = Like.objects.filter(user=request.user, post= post).first()
-            if is_liked is None:
-                like_list.append(False)
-            else:
-                like_list.append(True)
-        posts = zip(posts,like_list)
-        
-        
-        context ={'posts': posts}
-        # context['form']=form
-        return render(request, 'socialmedia/index.html',context=context)
-    
-    def get(self,request):
-        # form = PostUploadForm()
-        posts = Post.objects.all().order_by('-creation_time')
-        like_list = []
-        for post in posts:
-            is_liked = Like.objects.filter(user=request.user, post= post).first()
-            if is_liked is None:
-                like_list.append(False)
-            else:
-                like_list.append(True)
-        posts = zip(posts,like_list)
-        
-        print(posts)
-        context = {'posts': posts}
-        # context['form'] = form
-        return render(request, 'socialmedia/index.html',context=context)
-
-# @login_required
-# def home(request):
-#     if request.method == "POST":
-#         image = request.FILES.get('img')
-#         user  = request.user
-#         caption = request.POST.get('caption')
-#         new_post = Post.objects.create(user=user, image=image, caption=caption)
-#         new_post.save()
-#         user.posts+=1
-#         user.save()
-#         return redirect('home')
-
-#     posts = Post.objects.all().order_by('-creation_time')
-#     like_list = []
-#     for post in posts:
-#         is_liked = Like.objects.filter(user=request.user, post= post).first()
-#         if is_liked is None:
-#             like_list.append(False)
-#         else:
-#             like_list.append(True)
-#     posts = zip(posts,like_list)
-    
-#     print(posts)
-#     context ={'posts': posts}
-#     return render(request, 'socialmedia/index.html',context=context)
-
+    return render(request, 'socialmedia/index.html',context=context)
 
 
 @login_required
@@ -110,7 +52,6 @@ def post(request,pk):
     print(posts)
     context ={'posts': posts}
     return render(request ,'socialmedia/post-detail.html' ,context=context)
-
 
 
 @login_required

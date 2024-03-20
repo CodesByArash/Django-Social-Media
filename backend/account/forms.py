@@ -2,7 +2,6 @@ from django.contrib.auth.forms import UserCreationForm ,AuthenticationForm,UserC
 from account.models import User
 from django import forms
 from django.utils.safestring import mark_safe
-
 from django.contrib.auth.forms import PasswordChangeForm
 
 # Create your tests here.
@@ -14,10 +13,10 @@ class UserRegisterForm(UserCreationForm):
                                  (attrs={'placeholder':'Username*'})
                                  ,help_text=mark_safe("Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."))
     
-    first_name = forms.CharField(required = False,widget= forms.TextInput
+    first_name = forms.CharField(widget= forms.TextInput
                                  (attrs={'placeholder':'First Name'}))
     
-    last_name  = forms.CharField(required = False,widget= forms.TextInput
+    last_name  = forms.CharField(widget= forms.TextInput
                            (attrs={'placeholder':'Last Name'}))
     
     password1  = forms.CharField(widget=forms.PasswordInput
@@ -55,7 +54,7 @@ class UserSettingsForm(UserChangeForm):
         fields = ['username', 'email', 'first_name', 'last_name', 'bio', ]
 
 
-
+    
 class MyPasswordChangeForm(PasswordChangeForm):
     old_password = forms.CharField(widget=forms.PasswordInput
                                  (attrs={'placeholder':'Old Password*'}))
@@ -64,14 +63,18 @@ class MyPasswordChangeForm(PasswordChangeForm):
                                  ,help_text=mark_safe('Your password can’t be too similar to your other personal information.<br/>Your password must contain at least 8 characters.<br/>Your password can’t be a commonly used password.<br/>Your password can’t be entirely numeric.'))
     new_password2 =forms.CharField(widget=forms.PasswordInput
                                  (attrs={'placeholder':'Confirm Password*'}))
-    
+
 
 
 class UserLoginForm(AuthenticationForm):
-    email = forms.CharField(widget= forms.TextInput
+    class Meta:
+        model = User
+        fields = ('username', 'password')
+    username = forms.CharField(widget= forms.TextInput
                                  (attrs={'placeholder':'Username or Email*'})
                                  ,help_text=mark_safe("Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."))
     
     password  = forms.CharField(widget=forms.PasswordInput
                                  (attrs={'placeholder':'Password*'}),help_text=mark_safe('Your password can’t be too similar to your other personal information.<br/>Your password must contain at least 8 characters.<br/>Your password can’t be a commonly used password.<br/>Your password can’t be entirely numeric.'))
     
+ 

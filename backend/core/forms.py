@@ -10,9 +10,9 @@ class PostUploadForm(ModelForm):
     
     image = forms.ImageField()
     
-    def save(self, commit=True,*args, **kwargs):
-        self.cleaned_data['user']=kwargs['user']
-        return super(PostUploadForm, self).save(commit=commit)
+    # def save(self, commit=True,*args, **kwargs):
+    #     self.cleaned_data['user']=kwargs['user']
+    #     return super(PostUploadForm, self).save(commit=commit)
         
         
         

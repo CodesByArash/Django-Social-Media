@@ -12,4 +12,4 @@ urlpatterns = [
     path('settings/',SettingsView.as_view(),name="settings"),
     path('settings/password/',PasswordChangeView,name="password"),
     path('logout/',LogoutView,name='logout'),
-]
+]  
