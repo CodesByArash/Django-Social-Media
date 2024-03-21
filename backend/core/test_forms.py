@@ -1,7 +1,6 @@
 from django.test import TestCase
 from .forms import *
 
-
 class TestForms(TestCase):
     
     def setUp(self):

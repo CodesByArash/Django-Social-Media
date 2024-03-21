@@ -27,7 +27,8 @@ def home(request):
     posts = Post.objects.all().order_by('-creation_time')
     like_list = []
     for post in posts:
-        is_liked = Like.objects.filter(user=request.user, post= post).first()
+        is_liked = post.liked_by.filter(id=request.user.id).first()
+
         if is_liked is None:
             like_list.append(False)
         else:
@@ -43,7 +44,7 @@ def post(request,pk):
     posts = get_list_or_404(Post,id=pk)
     like_list = []
     for post in posts:
-        is_liked = Like.objects.filter(user=request.user, post= post).first()
+        is_liked = post.liked_by.filter(id=request.user.id).first()
         if is_liked is None:
             like_list.append(False)
         else:
@@ -59,16 +60,15 @@ def like(request):
     user = request.user
     post_id = request.GET.get('post_id')
     post    = get_object_or_404(Post,id=post_id)
-    liked = Like.objects.filter(user=user,post=post).first()
+    liked   = post.liked_by.filter(id=user.id).first()
     next = request.GET.get('next')
-
+    print(liked,'aasfdfsd')
     if liked is None:
-        like = Like.objects.create(post=post,user=user)
-        like.save()
+        post.liked_by.add(user)
         post.like_no += 1
         post.save()
     else:
-        liked.delete()
+        post.liked_by.remove(user)
         post.like_no -= 1
         post.save()
     
@@ -86,11 +86,4 @@ def deletepost(request):
         return HttpResponseRedirect('home')
 
     return redirect('home')
-    
-
-
-
-    
-    
-    
     
