@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load core_extras%}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -49,21 +49,22 @@
                     </div>
                 </a>
                 <div class="sidebar">
-                    <a href="{% url 'home' %}"  class="menu-item active">
+                    {% url 'home' as home %}
+                    <a href="{{home}}"  class="menu-item {% active request home %}">
                         <span><i class="bi bi-house"></i></span>
                         <h3>Home</h3>
                     </a>
-                    <a href="{% url 'profile' username=user.username %}"  class="menu-item">
+                    {% url 'profile' username=user.username as profile%}
+                    <a href="{{profile}}"  class="menu-item  {% active request profile %}"">
                         <span><i class="bi bi-person"></i></span>
                         <h3>Profile</h3>
                     </a>
-                    <a href="{% url 'settings' %}" class="menu-item">
+                    {% url 'settings' as settings %}
+                    <a href="{{settings}}" class="menu-item  {% active request settings %}"">
                         <span><i class="bi bi-gear"></i></i></span>
                         <h3>Settings</h3>
                     </a>
                 </div>
-                {% comment %} <label class="createe btn btn-primary " id="create" for="create-post">Create Post</label> {% endcomment %}
-
             </div>
 
             {% block main %}
@@ -72,20 +73,6 @@
 
         </div>
     </main>
-{% comment %} 
-    <div class="addpost">
-        <div class="post-create">
-            <div>
-                <label class="fontt bi bi-x closebtn"></label>
-            </div>
-            <div>
-                <h2 class="fontt">Add Posts</h2>
-                <input type="file" class="fontt " id="file-upload" hidden/>
-                <label for="file-upload" class="fontt btn btn-primary ">Upload Picture</label>
-                <textarea class="textarea " placeholder="Add Caption ...."></textarea> 
-                <label type="submit" class="btn btn-primary fontt" for="">Post</label>
-            </div>
-        </div> {% endcomment %}
     </div>
 
 
