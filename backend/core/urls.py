@@ -6,4 +6,5 @@ urlpatterns = [
     path('', home, name='home'),
     path('post/<slug:pk>',post, name='post'),
     path('like/',like, name='like'),
+    path('post/<slug:pk>/delete', deletepost, name='delete')
 ]

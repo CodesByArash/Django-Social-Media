@@ -15,6 +15,14 @@
                             <small>{{field.0.creation_time}}</small>
                         </div>
                     </div>
+                    <div>
+                        {% if field.0.user == request.user %}
+                            <form action="{% url 'delete' field.0.id %}" method="post">
+                                {% csrf_token %}
+                                <button class="bi bi-trash" type="submit" name="delete"></button>
+                            </form>
+                        {% endif %}   
+                    </div>
                 </div>
 
                 <div class="photo">
@@ -22,7 +30,6 @@
                 </div>
                 <div class="action-button">
                     <div class="interaction-buttons">
-
                     {% if field.1 == False %}
                         <span><a href="{% url "like" %}?post_id={{field.0.id}}&amp;next={{ request.path|urlencode }}" class="bi bi-suit-heart"></a></span>
                     {% else %}

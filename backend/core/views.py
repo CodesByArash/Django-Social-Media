@@ -77,13 +77,12 @@ def like(request):
 
 
 @login_required
-def deletepost(request):
-    post_id = request.GET.get('post_id')
-    post    = get_object_or_404(Post,id=post_id)
+def deletepost(request,pk):
+    post    = get_object_or_404(Post,pk=pk)
     if request.user == post.user:
         request.user.posts -= 1
         post.delete()
-        return HttpResponseRedirect('home')
+        return redirect('home')
 
     return redirect('home')
-    
+

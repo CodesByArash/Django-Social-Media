@@ -730,5 +730,9 @@ main .container .right{
         left:calc(20rem - 0.6rem);
         display: black;
     }
+}
 
+.delete-btn{
+    background: transparent;
+    background-color: transparent;
 }
