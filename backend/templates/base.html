@@ -1,5 +1,6 @@
 {% load static %}
 {% load core_extras%}
+{% load widget_tweaks %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,20 +13,29 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
 </head>
 <body>
+    {% comment %}
+        {% searchform as search %}
+    {% endcomment %}
     <nav>
         <div class="container">
             <h2 class="logo">
-                Social Media
+                <a href="{% url 'home' %}">Social Media</a>
             </h2>
             <div class="search-bar">
-                <i class="bi bi-search"></i>
-                <input type="search" placeholder="search for users">
+                <form id ="search-form" action="{% url "search" %}" enctype="multipart/form-data" method="get">
+                    {% csrf_token %}
+                    <button type="submit" id="submit"><i type="submit" form="search-form" class="bi bi-search"></i></button>
+                    <input id="search" name="search" type="search" required placeholder="Search for users">
+                    {% comment %}
+                        {{search.search|add_class:'search-bar'}}
+                    {% endcomment %}
+                </form>
             </div>
             <div class="create">
                 <a href="{% url 'logout' %}" class="btn btn-primary bi bi-door-closed" name="logout" for=""></a>
                 <!-- <button type="submit">Create</button> -->
                 <div class="profile-photo">
-                    <img src="{{user.profile_img.url}}" alt="profpic">
+                    <img src="{{request.user.profile_img.url}}" alt="profpic">
                 </div>
             </div>
         </div>
@@ -35,16 +45,16 @@
         <div class="container container1">
             <div class="left">
                 <!------------------------left------------------------>
-                <a href="{% url 'profile' username=user.username %}" class="profile">
+                <a href="{% url 'profile' username=request.user.username %}" class="profile">
                     <div class="profile-photo">
-                        <img src="{{user.profile_img.url}}" alt="profpic">
+                        <img src="{{request.user.profile_img.url}}" alt="profpic">
                     </div>
                     <div class="handle">
-                        <h4>{{user.first_name}}
-                            {{user.last_name}}
+                        <h4>{{request.user.first_name}}
+                            {{request.user.last_name}}
                         </h4>
                         <p class="text-muted">
-                            @{{user.username}}
+                            @{{request.user.username}}
                         </p>
                     </div>
                 </a>
@@ -54,7 +64,7 @@
                         <span><i class="bi bi-house"></i></span>
                         <h3>Home</h3>
                     </a>
-                    {% url 'profile' username=user.username as profile%}
+                    {% url 'profile' username=request.user.username as profile%}
                     <a href="{{profile}}"  class="menu-item  {% active request profile %}"">
                         <span><i class="bi bi-person"></i></span>
                         <h3>Profile</h3>
@@ -67,14 +77,30 @@
                 </div>
             </div>
 
-            {% block main %}
+            <div class="middle">
+                {% block main %}
 
-            {% endblock %}
+                {% endblock %}
+            </div>
 
-        </div>
+            <div class="right">
+                <div class="suggestions">
+                    <div class="heading">
+                        <h4>Suggestions</h4>
+                    </div>
+                    <div class="suggest">            
+                        <div class="profile-photo">
+                            <img src="{% static 'images/profile_photo.png' %}">
+                        </div>
+                        <div class="ingo">
+                            <h3>Milad Jafary</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </main>
     </div>
-
+    
 
     <script src="{% static 'js/index.js' %}"></script>
     <script type="text/javascript">

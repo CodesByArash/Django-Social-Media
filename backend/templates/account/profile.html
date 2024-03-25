@@ -3,13 +3,10 @@
 {% load widget_tweaks %}
 
 
-{% block title%}{{request.user.first_name}} {{request.user.last_name}}{% endblock %}
+{% block title%}{{request.user.username}}'s Profile{% endblock %}
 
 
 {% block main %}
-
-    
-<div class="middle">
     <div class="wrapper">
         <a href="profile-bg d-block"></a>
         <div>
@@ -34,7 +31,7 @@
                         <a class="btn btn-primary" href="{% url "follow" %}?username={{object.username}}&amp;next={{ request.path|urlencode }}">Follow</a>
                     {% endif %}
                 {% else %}
-                    <a class="btn btn-primary" href="#">Edit Profile</a>
+                    <a class="btn btn-primary" href="{% url 'settings' %}">Edit Profile</a>
                 {% endif %}
                 
             </div>
@@ -89,11 +86,5 @@
             {%endfor%}
         </div>
     </div>
-</div>
-
-<div class="right">
-
-</div> 
-
     
 {% endblock %}

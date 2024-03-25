@@ -50,7 +50,6 @@ def post(request,pk):
         else:
             like_list.append(True)
     posts = zip(posts,like_list)
-    print(posts)
     context ={'posts': posts}
     return render(request ,'socialmedia/post-detail.html' ,context=context)
 
@@ -62,7 +61,6 @@ def like(request):
     post    = get_object_or_404(Post,id=post_id)
     liked   = post.liked_by.filter(id=user.id).first()
     next = request.GET.get('next')
-    print(liked,'aasfdfsd')
     if liked is None:
         post.liked_by.add(user)
         post.like_no += 1
@@ -79,10 +77,26 @@ def like(request):
 @login_required
 def deletepost(request,pk):
     post    = get_object_or_404(Post,pk=pk)
+    user    = request.user
     if request.user == post.user:
-        request.user.posts -= 1
+        user.posts -= 1
+        user.save()
         post.delete()
         return redirect('home')
 
     return redirect('home')
+
+@login_required
+def search(request):
+    search_form = SearchForm(request.GET)
+    if search_form.is_valid():
+        username = search_form.cleaned_data['search']
+        query   = User.objects.filter(username__icontains=username).exclude(pk=request.user.id)
+        if len(query)==0:
+            query=None
+        context = {'query':query,}
+    else:
+        context = {'query': None}
+    
+    return render(request ,'socialmedia/search.html' ,context=context)
 
