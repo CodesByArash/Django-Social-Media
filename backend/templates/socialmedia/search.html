@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title%}Search{% endblock %}
+
+
+{% block main %}
+    {% if query is not None %}
+        {% for q in query %}
+        <div class="wrapper">
+            <div>
+                <div class="row">
+                    <div class="row1">
+                        <a href="" class="profile-link">
+                            <img src="{% static '/images/profile_photo.png'  %}" class="profile-img" alt="">
+                        </a>
+                        <div class="profile-marg">
+                            <div class="">
+                                <p class="profile-name">{{q.first_name}} {{q.last_name}}</p>
+                                <span>
+                                    <a href="#">@<span>{{q.username}}</span></a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p>{{q.bio}}</p>
+            </div>
+        </div>
+    {% endfor %}
+    {% else %}
+    <div class="wrapper">
+        no users found!
+    </div>
+    {% endif %}
+
+{% endblock %}
