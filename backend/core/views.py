@@ -1,10 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404, HttpResponseRedirect
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.views.generic import DeleteView
-from django.views import View
 from .forms import *
 from .models import *
 from account.models import *
@@ -72,7 +68,6 @@ def like(request):
     
     return HttpResponseRedirect(next)
     
-
 
 @login_required
 def deletepost(request,pk):

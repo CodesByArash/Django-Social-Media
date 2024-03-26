@@ -3,9 +3,9 @@ from django.contrib import messages
 from .models import User
 from core.models import *
 from core.models import Post
-from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404, HttpResponseRedirect
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView , DetailView ,UpdateView,ListView
+from django.views.generic import CreateView , DetailView ,UpdateView
 from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -55,7 +55,7 @@ class ProfileView(LoginRequiredMixin,DetailView):
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         context_data['post'] = Post.objects.filter(user=context_data['object'])
-        follow_relation = Follow.objects.filter(user=context_data['object'],follower=self.request.user).first()
+        follow_relation = self.request.user.follows.filter(id=context_data['object']).first()
         if(follow_relation is None):
             context_data['unfollow'] = False
         else:
@@ -64,8 +64,6 @@ class ProfileView(LoginRequiredMixin,DetailView):
         return context_data
 
 
-
-  
 class SettingsView(LoginRequiredMixin,UpdateView):
     model = User
     template_name = 'account/settings.html'
@@ -109,20 +107,21 @@ def follow(request):
     username = request.GET.get('username')
     next = request.GET.get('next')
     followed = get_object_or_404(User,username=username)
-    follows  = Follow.objects.filter(user=followed,follower=follower).first()
+    follows  = follower.follows.filter(id=followed.id).first()
     
     if follows is None:
-        follow_relation = Follow.objects.create(user=followed, follower=follower)
-        follow_relation.save()
+        follows = follower.follows.add(id=followed.id)
         follower.followings += 1
         follower.save()
         followed.followers  += 1
         followed.save()
     else:
-        follows.delete()
+        follower.follows.remove(followed)
         follower.followings -= 1
         follower.save()
         followed.followers  -= 1
         followed.save()
         
     return HttpResponseRedirect(next)
+
+ 
