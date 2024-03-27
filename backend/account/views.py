@@ -55,7 +55,7 @@ class ProfileView(LoginRequiredMixin,DetailView):
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         context_data['post'] = Post.objects.filter(user=context_data['object'])
-        follow_relation = self.request.user.follows.filter(id=context_data['object']).first()
+        follow_relation = self.request.user.follows.filter(id=context_data['object'].id).first()
         if(follow_relation is None):
             context_data['unfollow'] = False
         else:
