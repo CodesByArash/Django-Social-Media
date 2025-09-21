@@ -1,11 +1,11 @@
-from django.contrib.auth import authenticate , login
+from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from .models import User
-from core.models import *
 from core.models import Post
+from core.repositories import PostRepository, UserRepository
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView , DetailView ,UpdateView
+from django.views.generic import CreateView, DetailView, UpdateView
 from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -54,13 +54,9 @@ class ProfileView(LoginRequiredMixin,DetailView):
     
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data['post'] = Post.objects.filter(user=context_data['object'])
-        follow_relation = self.request.user.follows.filter(id=context_data['object'].id).first()
-        if(follow_relation is None):
-            context_data['unfollow'] = False
-        else:
-            context_data['unfollow'] = True
-
+        user = context_data['object']
+        context_data['posts'] = PostRepository.get_user_posts(user)
+        context_data['is_following'] = UserRepository.is_following(self.request.user, user)
         return context_data
 
 
@@ -103,25 +99,14 @@ def LogoutView(request):
 
 @login_required
 def follow(request):
-    follower = request.user
     username = request.GET.get('username')
-    next = request.GET.get('next')
-    followed = get_object_or_404(User,username=username)
-    follows  = follower.follows.filter(id=followed.id).first()
+    next_url = request.GET.get('next')
     
-    if follows is None:
-        follows = follower.follows.add(id=followed.id)
-        follower.followings += 1
-        follower.save()
-        followed.followers  += 1
-        followed.save()
-    else:
-        follower.follows.remove(followed)
-        follower.followings -= 1
-        follower.save()
-        followed.followers  -= 1
-        followed.save()
-        
-    return HttpResponseRedirect(next)
+    if username:
+        user_to_follow = UserRepository.get_user_by_username(username)
+        if user_to_follow:
+            UserRepository.toggle_follow(request.user, user_to_follow)
+    
+    return HttpResponseRedirect(next_url)
 
  
