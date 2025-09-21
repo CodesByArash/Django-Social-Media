@@ -64,9 +64,10 @@ def search(request):
     users = None
     if search_form.is_valid():
         query = search_form.cleaned_data['search']
-        users = User.objects.filter(username__icontains=query).exclude(id=request.user.id)
 
-    context = {'query': users if users.exists() else None}
+        users = User.objects.search_users(query, exclude_user=request.user)
+
+    context = {'query': users if users and users.exists() else None}
     return render(request, 'socialmedia/search.html', context=context)
 
 
@@ -100,9 +101,10 @@ def delete_comment(request, comment_id):
 @login_required
 def follow_toggle(request, user_id):
     target_user = get_object_or_404(User, id=user_id)
-    if request.user.is_following(target_user):
-        request.user.unfollow_user(target_user)
+
+    if User.objects.is_following(request.user, target_user):
+        User.objects.unfollow_user(request.user, target_user)
     else:
-        request.user.follow_user(target_user)
+        User.objects.follow_user(request.user, target_user)
     next_url = request.GET.get('next', '/')
     return HttpResponseRedirect(next_url)

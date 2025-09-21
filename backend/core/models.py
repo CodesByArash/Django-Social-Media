@@ -16,22 +16,21 @@ class Post(models.Model):
     user          = models.ForeignKey(User,on_delete=models.CASCADE)
     caption       = models.TextField(blank=True, max_length=2000, help_text='Write a caption for your post')
     creation_time = models.DateTimeField(default=timezone.now)
-    # like_no       = models.IntegerField(default=0)
     liked_by      = models.ManyToManyField(User, related_name='liked_posts', blank=True)
     
     def __str__(self):
         return f"{self.user.username} - {self.caption[:50]}{"..." if len(self.caption) > 50 else ""}"
     
     def get_likes_count(self):
-        """Return the actual count of likes from the relationship."""
+
         return self.liked_by.count()
     
     def is_liked_by(self, user):
-        """Check if a user has liked this post."""
+
         return self.liked_by.filter(id=user.id).exists()
     
     def like_post(self, user):
-        """Like this post by a user"""
+
         if not self.is_liked_by(user):
             self.liked_by.add(user)
             self.save()
@@ -39,7 +38,7 @@ class Post(models.Model):
         return False
     
     def unlike_post(self, user):
-        """Unlike this post by a user"""
+
         if self.is_liked_by(user):
             self.liked_by.remove(user)
             self.save()
@@ -47,14 +46,14 @@ class Post(models.Model):
         return False
     
     def toggle_like(self, user):
-        """Toggle like/unlike status"""
+
         if self.is_liked_by(user):
             return self.unlike_post(user)
         else:
             return self.like_post(user)
     
     def delete_post(self, user):
-        """Delete post if user is the owner"""
+
         if self.user == user:
             self.delete()
             return True
@@ -72,20 +71,19 @@ class Post(models.Model):
     
     @classmethod
     def get_user_posts(cls, user):
-        """Get all posts by a specific user"""
-        # return cls.objects.filter(user=user).order_by('-creation_time')
-        print(cls.objects.all())
-        return cls.objects.all()
+
+        return cls.objects.filter(user=user).order_by('-creation_time')
+
     
     @classmethod
     def get_feed_posts(cls, user):
-        """Get posts for user's feed (following users + own posts)"""
+
         following_users = user.follows.all()
         following_users = following_users.union([user])  # Include own posts
         return cls.objects.filter(user__in=following_users).order_by('-creation_time')
     
     def save(self, *args, **kwargs):
-        # Update like counter with actual count
+
         self.like_no = self.get_likes_count()
         super().save(*args, **kwargs)
     

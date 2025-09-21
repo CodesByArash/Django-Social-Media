@@ -10,7 +10,6 @@ from .forms import UserRegisterForm, UserLoginForm, UserSettingsForm, MyPassword
 from core.models import Post
 from .models import User
 
-
 # ---------------------------
 # Class-based views
 # ---------------------------
@@ -35,13 +34,11 @@ class SignUpView(CreateView):
         login(self.request, user)
         return response
 
-
 class LoginView(SigninView):
     template_name = 'account/login.html'
     success_url = reverse_lazy('home')
     form_class = UserLoginForm
     success_message = "Successfully logged in"
-
 
 class ProfileView(LoginRequiredMixin, DetailView):
     model = User
@@ -54,23 +51,20 @@ class ProfileView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = context['object']
-        # استفاده از متد مدل برای گرفتن پست‌ها
-        context['posts'] = Post.get_user_posts(user)
-        # وضعیت فالو
-        context['is_following'] = self.request.user.is_following(user)
-        return context
 
+        context['posts'] = Post.objects.get_user_posts(user)
+
+        context['is_following'] = User.objects.is_following(self.request.user, user)
+        return context
 
 class SettingsView(LoginRequiredMixin, UpdateView):
     model = User
     template_name = 'account/settings.html'
     success_url = reverse_lazy('settings')
     form_class = UserSettingsForm
-    # fields = ['username', 'email', 'first_name', 'last_name', 'bio', ]
 
     def get_object(self, **kwargs):
         return self.request.user
-
 
 # ---------------------------
 # Function-based views
@@ -90,12 +84,10 @@ def PasswordChangeView(request):
 
     return render(request, 'account/password.html', {'form': password_form})
 
-
 @login_required
 def LogoutView(request):
     logout(request)
     return redirect('login')
-
 
 @login_required
 def follow(request):
@@ -104,6 +96,7 @@ def follow(request):
 
     if username:
         user_to_follow = get_object_or_404(User, username=username)
-        request.user.toggle_follow(user_to_follow)
+
+        User.objects.toggle_follow(request.user, user_to_follow)
 
     return HttpResponseRedirect(next_url)

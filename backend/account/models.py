@@ -4,10 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import FileExtensionValidator
 import uuid
 
-
 class CustomUserManager(BaseUserManager):
-    """Custom manager for User model with email as required field."""
-
     def _create_user(self, username, email, password, **extra_fields):
         if not username:
             raise ValueError(_("The Username must be set"))
@@ -39,10 +36,54 @@ class CustomUserManager(BaseUserManager):
 
         return self._create_user(username, email, password, **extra_fields)
 
+    def search_users(self, query, exclude_user=None):
+
+        qs = self.get_queryset().filter(username__icontains=query)
+        if exclude_user:
+            qs = qs.exclude(id=exclude_user.id)
+        return qs
+
+    def get_followers_count(self, user):
+
+        return user.followed_by.count()
+
+    def get_following_count(self, user):
+
+        return user.follows.count()
+
+    def get_posts_count(self, user):
+
+        return user.post_set.count()
+
+    def follow_user(self, user, user_to_follow):
+
+        if user != user_to_follow and not user.follows.filter(id=user_to_follow.id).exists():
+            user.follows.add(user_to_follow)
+            user.save()
+            return True
+        return False
+
+    def unfollow_user(self, user, user_to_unfollow):
+
+        if user.follows.filter(id=user_to_unfollow.id).exists():
+            user.follows.remove(user_to_unfollow)
+            user.save()
+            return True
+        return False
+
+    def is_following(self, user, other_user):
+        return user.follows.filter(id=other_user.id).exists()
+
+    def toggle_follow(self, user, other_user):
+
+        if self.is_following(user, other_user):
+            return self.unfollow_user(user, other_user)
+        else:
+            return self.follow_user(user, other_user)
 
 class User(AbstractUser):  
-    id                = models.UUIDField(primary_key = True, default= uuid.uuid4, editable = False)
-    username          = models.CharField(max_length = 50, blank = False, null = False, unique = True)  
+    id                = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    username          = models.CharField(max_length=50, blank=False, null=False, unique=True)  
     email             = models.EmailField(_('Email Address'), max_length=50, unique=True)
     is_email_verified = models.BooleanField(default=False)
     first_name        = models.CharField(max_length=150, blank=True, null=True)
@@ -58,8 +99,7 @@ class User(AbstractUser):
     followers         = models.IntegerField(default=0)
     followings        = models.IntegerField(default=0)
     posts             = models.IntegerField(default=0)
-    
-    follows         = models.ManyToManyField('self', related_name='followed_by', blank= True, symmetrical=False)
+    follows           = models.ManyToManyField('self', related_name='followed_by', blank=True, symmetrical=False)
 
     objects = CustomUserManager()
 
@@ -69,69 +109,22 @@ class User(AbstractUser):
         return self.username
 
     def get_full_name(self):
-        """Return the first_name plus the last_name, with a space in between."""
+
         full_name = f'{self.first_name} {self.last_name}'
         return full_name.strip()
     
     def get_short_name(self):
-        """Return the short name for the user."""
+
         return self.first_name
-    
-    def get_followers_count(self):
-        """Return the actual count of followers from the relationship."""
-        return self.followed_by.count()
-    
-    def get_following_count(self):
-        """Return the actual count of following from the relationship."""
-        return self.follows.count()
-    
-    def get_posts_count(self):
-        """Return the actual count of posts."""
-        return self.post_set.count()
-    
-    def follow_user(self, user_to_follow):
-        """Follow another user"""
-        if self != user_to_follow and not self.is_following(user_to_follow):
-            self.follows.add(user_to_follow)
-            self.save()
-            return True
-        return False
-    
-    def unfollow_user(self, user_to_unfollow):
-        """Unfollow another user"""
-        if self.is_following(user_to_unfollow):
-            self.follows.remove(user_to_unfollow)
-            self.save()
-            return True
-        return False
-    
-    def is_following(self, user):
-        """Check if this user is following another user"""
-        return self.follows.filter(id=user.id).exists()
-    
-    def toggle_follow(self, user):
-        """Toggle follow/unfollow status"""
-        if self.is_following(user):
-            return self.unfollow_user(user)
-        else:
-            return self.follow_user(user)
-    
-    def search_users(self, query):
-        """Search for users by username"""
-        return User.objects.filter(
-            username__icontains=query
-        ).exclude(id=self.id)
-    
+
     def save(self, *args, **kwargs):
-        # Update counters with actual counts
-        self.followers = self.get_followers_count()
-        self.followings = self.get_following_count()
-        self.posts = self.get_posts_count()
+
+        self.followers = User.objects.get_followers_count(self)
+        self.followings = User.objects.get_following_count(self)
+        self.posts = User.objects.get_posts_count(self)
         super().save(*args, **kwargs)
-    
+
     class Meta:
         ordering = ['-date_joined']
         verbose_name = 'User'
         verbose_name_plural = 'Users'
-
-    
