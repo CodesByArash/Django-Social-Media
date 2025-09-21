@@ -75,7 +75,7 @@
 
     <div class="profileposts">
         <div class="post">
-            {%for field in post%}
+            {%for field in posts%}
                 <div class="photo">
                     <a href="{% url 'post' pk=field.id%}">
                         <img class="pic" src="{{field.image.url}}">
