@@ -10,7 +10,7 @@ def home(request):
     if request.method == 'POST':
         form = PostUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            Post.objects.create(
+            Post.objects.create_post(
                 user=request.user,
                 image=form.cleaned_data['image'],
                 caption=form.cleaned_data['caption']
@@ -64,7 +64,6 @@ def search(request):
     users = None
     if search_form.is_valid():
         query = search_form.cleaned_data['search']
-
         users = User.objects.search_users(query, exclude_user=request.user)
 
     context = {'query': users if users and users.exists() else None}
@@ -77,11 +76,11 @@ def post_comments(request, post_id):
     if request.method == 'POST':
         text = request.POST.get('text')
         if text:
-            Comment.objects.create(post=post, user=request.user, text=text)
+            Comment.objects.create_comment(post=post, user=request.user, text=text)
             messages.success(request, 'Comment added!')
             return redirect('post', pk=post_id)
 
-    comments = post.comments.all().order_by('creation_time')
+    comments = Comment.objects.get_post_comments(post)
     context = {'post': post, 'comments': comments}
     return render(request, 'socialmedia/post-comments.html', context=context)
 
@@ -101,7 +100,6 @@ def delete_comment(request, comment_id):
 @login_required
 def follow_toggle(request, user_id):
     target_user = get_object_or_404(User, id=user_id)
-
     if User.objects.is_following(request.user, target_user):
         User.objects.unfollow_user(request.user, target_user)
     else:

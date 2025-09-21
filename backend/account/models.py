@@ -37,49 +37,10 @@ class CustomUserManager(BaseUserManager):
         return self._create_user(username, email, password, **extra_fields)
 
     def search_users(self, query, exclude_user=None):
-
         qs = self.get_queryset().filter(username__icontains=query)
         if exclude_user:
             qs = qs.exclude(id=exclude_user.id)
         return qs
-
-    def get_followers_count(self, user):
-
-        return user.followed_by.count()
-
-    def get_following_count(self, user):
-
-        return user.follows.count()
-
-    def get_posts_count(self, user):
-
-        return user.post_set.count()
-
-    def follow_user(self, user, user_to_follow):
-
-        if user != user_to_follow and not user.follows.filter(id=user_to_follow.id).exists():
-            user.follows.add(user_to_follow)
-            user.save()
-            return True
-        return False
-
-    def unfollow_user(self, user, user_to_unfollow):
-
-        if user.follows.filter(id=user_to_unfollow.id).exists():
-            user.follows.remove(user_to_unfollow)
-            user.save()
-            return True
-        return False
-
-    def is_following(self, user, other_user):
-        return user.follows.filter(id=other_user.id).exists()
-
-    def toggle_follow(self, user, other_user):
-
-        if self.is_following(user, other_user):
-            return self.unfollow_user(user, other_user)
-        else:
-            return self.follow_user(user, other_user)
 
 class User(AbstractUser):  
     id                = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -96,9 +57,6 @@ class User(AbstractUser):
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'gif'])],
         help_text='Upload a profile picture (JPG, JPEG, PNG, GIF only)'
     )
-    followers         = models.IntegerField(default=0)
-    followings        = models.IntegerField(default=0)
-    posts             = models.IntegerField(default=0)
     follows           = models.ManyToManyField('self', related_name='followed_by', blank=True, symmetrical=False)
 
     objects = CustomUserManager()
@@ -109,22 +67,54 @@ class User(AbstractUser):
         return self.username
 
     def get_full_name(self):
-
+        """Return the first_name plus the last_name, with a space in between."""
         full_name = f'{self.first_name} {self.last_name}'
         return full_name.strip()
     
     def get_short_name(self):
-
+        """Return the short name for the user."""
         return self.first_name
 
-    def save(self, *args, **kwargs):
+    def follow(self, other_user):
+        if self != other_user and not self.is_following(other_user):
+            self.follows.add(other_user)
+            self.save()
+            return True
+        return False
 
-        self.followers = User.objects.get_followers_count(self)
-        self.followings = User.objects.get_following_count(self)
-        self.posts = User.objects.get_posts_count(self)
+    def unfollow(self, other_user):
+        if self.is_following(other_user):
+            self.follows.remove(other_user)
+            self.save()
+            return True
+        return False
+
+    def is_following(self, other_user):
+        return self.follows.filter(id=other_user.id).exists()
+
+    def toggle_follow(self, other_user):
+        if self.is_following(other_user):
+            return self.unfollow(other_user)
+        else:
+            return self.follow(other_user)
+
+    @property
+    def posts_count(self):
+        return self.post_set.count()
+
+    @property
+    def followers_count(self):
+        return self.followed_by.count()
+
+    @property
+    def followings_count(self):
+        return self.follows.count()
+
+    def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
     class Meta:
         ordering = ['-date_joined']
         verbose_name = 'User'
         verbose_name_plural = 'Users'
+

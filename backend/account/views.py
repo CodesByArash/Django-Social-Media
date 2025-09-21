@@ -51,10 +51,9 @@ class ProfileView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = context['object']
-
         context['posts'] = Post.objects.get_user_posts(user)
-
-        context['is_following'] = User.objects.is_following(self.request.user, user)
+        # استفاده از متد مدل برای وضعیت فالو
+        context['is_following'] = self.request.user.is_following(user)
         return context
 
 class SettingsView(LoginRequiredMixin, UpdateView):
@@ -96,7 +95,7 @@ def follow(request):
 
     if username:
         user_to_follow = get_object_or_404(User, username=username)
-
-        User.objects.toggle_follow(request.user, user_to_follow)
+        # استفاده از متد مدل برای فالو/آنفالو
+        request.user.toggle_follow(user_to_follow)
 
     return HttpResponseRedirect(next_url)
