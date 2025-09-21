@@ -5,26 +5,39 @@ from django.core.validators import FileExtensionValidator
 import uuid
 
 
-# class CustomUserManager(BaseUserManager):
-#     def _create_user(self, name, email, password, **extra_fields):
-#         if not email:
-#             raise ValueError("you have not provided a valid e-mail address")
-        
-#         email = self.normalize_email(email)
-#         user = self.model(email=email, name=name, **extra_fields)
-#         user.set_password(password)
-#         user.save(using=self._db)
+class CustomUserManager(BaseUserManager):
+    """Custom manager for User model with email as required field."""
 
-#         return user
-#     def create_user(self, name=None, email=None, password=None, **extra_fields):
-#         extra_fields.setdefault('is_staff', False)
-#         extra_fields.setdefault('is_superuser', False)
-#         return self._create_user(name, email, password, **extra_fields)
+    def _create_user(self, username, email, password, **extra_fields):
+        if not username:
+            raise ValueError(_("The Username must be set"))
+        if not email:
+            raise ValueError(_("The Email must be set"))
 
-#     def create_superuser(self, name=None, email=None, password=None, **extra_fields):
-#         extra_fields.setdefault('is_staff', True)
-#         extra_fields.setdefault('is_superuser', True)
-#         return self._create_user(name, email, password, **extra_fields)
+        email = self.normalize_email(email)
+        username = self.model.normalize_username(username)
+
+        user = self.model(username=username, email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+
+        return user
+
+    def create_user(self, username, email=None, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", False)
+        extra_fields.setdefault("is_superuser", False)
+        return self._create_user(username, email, password, **extra_fields)
+
+    def create_superuser(self, username, email=None, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError(_("Superuser must have is_staff=True."))
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError(_("Superuser must have is_superuser=True."))
+
+        return self._create_user(username, email, password, **extra_fields)
 
 
 class User(AbstractUser):  
@@ -48,7 +61,7 @@ class User(AbstractUser):
     
     follows         = models.ManyToManyField('self', related_name='followed_by', blank= True, symmetrical=False)
 
-    # objects = CustomUserManager()
+    objects = CustomUserManager()
 
     REQUIRED_FIELDS = ['email', ]
 

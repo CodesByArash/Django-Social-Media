@@ -73,7 +73,9 @@ class Post(models.Model):
     @classmethod
     def get_user_posts(cls, user):
         """Get all posts by a specific user"""
-        return cls.objects.filter(user=user).order_by('-creation_time')
+        # return cls.objects.filter(user=user).order_by('-creation_time')
+        print(cls.objects.all())
+        return cls.objects.all()
     
     @classmethod
     def get_feed_posts(cls, user):
@@ -107,3 +109,4 @@ class Comment(models.Model):
         ordering = ['creation_time']
         verbose_name = 'Comment'
         verbose_name_plural = 'Comments'
+

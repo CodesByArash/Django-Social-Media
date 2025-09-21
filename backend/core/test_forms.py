@@ -1,4 +1,5 @@
 from django.test import TestCase
+from backend.account.forms import *
 from .forms import *
 
 class TestForms(TestCase):

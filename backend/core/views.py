@@ -1,25 +1,16 @@
-from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404, HttpResponseRedirect
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .forms import *
-from .models import *
-from account.models import *
-
-
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import *
-from .repositories import PostRepository, UserRepository
+from .forms import PostUploadForm, SearchForm
+from .models import Post, Comment
 from account.models import User
-
 
 @login_required
 def home(request):
     if request.method == 'POST':
         form = PostUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            PostRepository.create_post(
+            Post.objects.create(
                 user=request.user,
                 image=form.cleaned_data['image'],
                 caption=form.cleaned_data['caption']
@@ -29,23 +20,17 @@ def home(request):
     else:
         form = PostUploadForm()
 
-    posts = PostRepository.get_all_posts()
-    posts_with_likes = PostRepository.get_posts_with_like_status(posts, request.user)
-    
-    context = {
-        'posts': posts_with_likes, 
-        'form': form
-    }
+    posts = Post.objects.all().order_by('-creation_time')
+    posts_with_likes = [(post, post.is_liked_by(request.user)) for post in posts]
+
+    context = {'posts': posts_with_likes, 'form': form}
     return render(request, 'socialmedia/index.html', context=context)
 
 
 @login_required
 def post(request, pk):
-    post = PostRepository.get_post_by_id(pk)
-    if not post:
-        return redirect('home')
-    
-    posts_with_likes = PostRepository.get_posts_with_like_status([post], request.user)
+    post = get_object_or_404(Post, id=pk)
+    posts_with_likes = [(post, post.is_liked_by(request.user))]
     context = {'posts': posts_with_likes}
     return render(request, 'socialmedia/post-detail.html', context=context)
 
@@ -53,33 +38,71 @@ def post(request, pk):
 @login_required
 def like(request):
     post_id = request.GET.get('post_id')
-    next_url = request.GET.get('next')
-    
+    next_url = request.GET.get('next', '/')
+
     if post_id:
-        PostRepository.toggle_like(post_id, request.user)
-    
+        post = get_object_or_404(Post, id=post_id)
+        post.toggle_like(request.user)
+
     return HttpResponseRedirect(next_url)
-    
+
 
 @login_required
 def deletepost(request, pk):
-    success = PostRepository.delete_post(pk, request.user)
-    if success:
+    post = get_object_or_404(Post, id=pk)
+    if post.delete_post(request.user):
         messages.success(request, 'Post deleted successfully!')
     else:
         messages.error(request, 'You can only delete your own posts!')
-    
+
     return redirect('home')
+
 
 @login_required
 def search(request):
     search_form = SearchForm(request.GET)
+    users = None
     if search_form.is_valid():
         query = search_form.cleaned_data['search']
-        users = UserRepository.search_users(query, exclude_user=request.user)
-        context = {'query': users if users.exists() else None}
-    else:
-        context = {'query': None}
-    
+        users = User.objects.filter(username__icontains=query).exclude(id=request.user.id)
+
+    context = {'query': users if users.exists() else None}
     return render(request, 'socialmedia/search.html', context=context)
 
+
+@login_required
+def post_comments(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    if request.method == 'POST':
+        text = request.POST.get('text')
+        if text:
+            Comment.objects.create(post=post, user=request.user, text=text)
+            messages.success(request, 'Comment added!')
+            return redirect('post', pk=post_id)
+
+    comments = post.comments.all().order_by('creation_time')
+    context = {'post': post, 'comments': comments}
+    return render(request, 'socialmedia/post-comments.html', context=context)
+
+
+@login_required
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    post_id = comment.post.id
+    if comment.user == request.user:
+        comment.delete()
+        messages.success(request, 'Comment deleted!')
+    else:
+        messages.error(request, 'You can only delete your own comments!')
+    return redirect('post', pk=post_id)
+
+
+@login_required
+def follow_toggle(request, user_id):
+    target_user = get_object_or_404(User, id=user_id)
+    if request.user.is_following(target_user):
+        request.user.unfollow_user(target_user)
+    else:
+        request.user.follow_user(target_user)
+    next_url = request.GET.get('next', '/')
+    return HttpResponseRedirect(next_url)
