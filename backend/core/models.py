@@ -8,7 +8,6 @@ from account.models import User
 
 class PostManager(models.Manager):
     def create_post(self, user, image, caption=''):
-        """Create a new post"""
         return self.create(user=user, image=image, caption=caption)
 
     def get_user_posts(self, user):
@@ -16,7 +15,7 @@ class PostManager(models.Manager):
 
     def get_feed_posts(self, user):
         following_users = user.follows.all()
-        following_users = following_users.union([user])  # Include own posts
+        following_users = following_users.union([user])
         return self.filter(user__in=following_users).order_by('-creation_time')
 
 class Post(models.Model):
